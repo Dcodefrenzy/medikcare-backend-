@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
+const {users} = require("../../users/usersModel");
 
 PersonalRecordsSchema = mongoose.Schema({
-		image: {
-			type:String,
-			required: false,
-		},
 		country: {
 			type:Number,
 			required: false,
@@ -22,7 +19,7 @@ PersonalRecordsSchema = mongoose.Schema({
 			required: false,
 		},
 		status: {
-			type: Number,
+			type: String,
 			required: false,
 		},
 		kinName: {
@@ -40,6 +37,7 @@ PersonalRecordsSchema = mongoose.Schema({
 		_userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			required:true,
+			ref:users,
 		},
 });
 

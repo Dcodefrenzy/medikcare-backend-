@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const _ = require('lodash');
 
 
-var adminSchema = new mongoose.Schema({
+let adminSchema = new mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
@@ -22,6 +22,7 @@ var adminSchema = new mongoose.Schema({
 		required: true,
 		minlenght: 11,
 		maxlength: 11,
+		unique: true,
 	},
 	firstname: {
 		type: String,
@@ -47,11 +48,25 @@ var adminSchema = new mongoose.Schema({
 			minlenght: 6,
 	},
 	verification : {
-		type: Number,
+		type: Boolean,
 		reqired:true,
 	},
 	image: {
+		filename:{
+			type:String,
+			required:false,
+		},
+		path:{
+			type:String,
+			required:false,
+		}
+	},
+	lastLogin: {
 		type:String,
+		required: false,
+	},
+	loginStatus: {
+		type:Boolean,
 		required:false,
 	},
 	dateCreated: {
@@ -86,12 +101,26 @@ var adminSchema = new mongoose.Schema({
 			next();
 		}
 	});
+	adminSchema.pre('findOneAndUpdate', function(next){
+		var admin = this.getUpdate(); 
+		if (admin.$set.password) {
+			bcrypt.genSalt(10, (err, salt)=>{
+				bcrypt.hash(admin.$set.password, salt, (err, hash)=>{
+					this.getUpdate().$set.password = hash;
+					next();
+				});
+			});
+		}else{
+			next();
+		}
+	});
+
 
 	adminSchema.methods.toJSON = function(){
 	var admin = this;
 	var adminObject = admin.toObject();
 
-	return _.pick(adminObject, ['_id', 'email', 'firstname','lastname','phoneNumber','level','verification']);
+	return _.pick(adminObject, ['_id', 'email', 'firstname','lastname','phoneNumber','level','verification', 'lastLogin', 'loginStatus', 'deleteAdmin','image','_createdBy']);
 };
 
 
@@ -99,7 +128,7 @@ var adminSchema = new mongoose.Schema({
 	adminSchema.methods.generateAuthToken = function(){
 		var admin = this;
 		var access = 'auth';
-		var token = jwt.sign({_id: admin._id.toHexString(), access}, 'mobigasapp##', {expiresIn: '30m'});	
+		var token = jwt.sign({_id: admin._id.toHexString(), access}, 'mobigasapp##', {expiresIn: '7h'});	
 		return admin.save().then(()=>{
 			return token;
 		});
@@ -112,15 +141,19 @@ var adminSchema = new mongoose.Schema({
 		if (!body) {
 			return Promise.reject();
 		}
+		if(body.deleteAdmin === 1) {
+			return Promise.reject();
+		}
 		return new Promise((resolve, reject)=>{
 			bcrypt.compare(password, body.password, (err, res)=>{
 				if (res) {
-					resolve(body);
+					return resolve(body);
 				}else{
-					reject();
+					const error = {status:403, message:"Email or password do not exist"}
+					return reject(error);
 				}	
-			});
-		});
+			})
+		})
 	});
 }
 
@@ -133,7 +166,8 @@ var adminSchema = new mongoose.Schema({
 			decode = jwt.verify(token, 'mobigasapp##');
 		}catch(e){
 			return new Promise((resolve, reject)=>{
-				return reject();
+				e.status = 401;
+				return reject(e);
 			});
 		}	
 		return admin.findOne({
@@ -143,6 +177,6 @@ var adminSchema = new mongoose.Schema({
 
 
 
-var admins = mongoose.model('Admins', adminSchema);
+const admins = mongoose.model('Admins', adminSchema);
 
 module.exports = {admins};

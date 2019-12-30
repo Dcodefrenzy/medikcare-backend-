@@ -16,8 +16,10 @@ exports.addLogs = (req, res)=>{
 		if (!data) {
 			return res.status(404).send("Unable to add to logs");
 		}
-		res.status(200).send(req.data);
+		//console.log(data)
+		res.status(201).send(req.data);
 	}).catch((e)=>{
+		//sconsole.log(e)
 		res.status(404).send(e);
 	});
 }
@@ -34,29 +36,67 @@ exports.getAllLogs = (req, res)=>{
 	});
 }
 
+exports.adminLogs =(req, res)=>{
+	Logs.find({_loggerId:req.admin._id}).then((adminLogs)=>{
+			if (!adminLogs) {
+				
+			const error = {status:404, message:"No Admin Log found."}
+			return res.status(404).send(error)
+			}
+			const admin = {status:200, message:adminLogs}
+			res.status(200).send(admin);
+	}).catch((e)=>{
+		
+		const error = {status:404, message:"No Admin Log found."}
+		return res.status(404).send(error)
+	})
+}
+
 exports.getUserLogs = (req, res)=>{
-	var _userId = req.params.id;
-	Logs.find({_userId}).then((logs)=>{
+	const _loggerId = req.user.id;
+	Logs.find({_loggerId:_loggerId}).then((logs)=>{
 		if (!logs) {
 			return res.status(404).send("No logs for this user found");
 		}
-		res.status(200).send(logs);
+		log = {status:200, message:logs};
+		res.status(200).send(log)
+	}).catch((e)=>{
+		res.status(404).send("No logs")
+	});
+}
+exports.getUserUnreadLogs = (req, res)=>{
+	const _loggerId = req.user.id;
+	Logs.find({_loggerId:_loggerId, status:"Unread"}).then((logs)=>{
+		if (!logs) {
+			return res.status(404).send("No logs for this user found");
+		}
+		log = {status:200, message:logs};
+		res.status(200).send(log)
 	}).catch((e)=>{
 		res.status(404).send("No logs")
 	});
 }
 
-
-exports.getEachLoanLogsForUsers = (req, res)=>{
-	var _userId = req.params.id;
-	var _loanId = req.params.loan;
-/*	console.log(_userId, _loanId);*/
-	Logs.find({_userId, _loanId}).then((logs)=>{
-		if (!logs) {
-			return res.status(404).send("No logs for this loan found"); 
+exports.updateLogs  = (req, res) =>{
+	let _loggerId = "";
+	if (req.admin) {
+		 _loggerId = req.admin._id;
+	}else if(req.user){
+		_loggerId = req.user._id;
+	}else if (req.doctor) {
+		_loggerId = req.doctor._id;
+	}
+	Logs.updateMany({_loggerId:_loggerId}, {$set: {status:"read"}}, {new: true}).then((logs)=>{
+		if (!logs) {		
+		log = {status:404, message:"Error somewhere."};
+		res.status(404).send(log)
 		}
-		res.status(200).send(logs);
+		log = {status:200, message:"logs updated"};
+		res.status(200).send(log);
 	}).catch((e)=>{
-		res.status(404).send("");
+		console.log(e);
+		log = {status:404, message:"Error somewhere."};
+		res.status(404).send(log)
 	});
 }
+

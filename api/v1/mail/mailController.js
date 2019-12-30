@@ -1,33 +1,99 @@
-const nodemailer = require("nodemailer");
-var sgTransport = require('nodemailer-sendgrid-transport');
+let nodemailer = require('nodemailer');
+let sgTransport = require('nodemailer-sendgrid-transport');
+require('dotenv').config()
 
-const options = {
-	 auth: {
-		api_user: "Frenzykul",
-		api_key: "Frenzykul01",
-	},
+let options = {
+	auth: {
+	  api_user: process.env.SENDGRID_API_USER,
+	  api_key: process.env.SENDGRID_API_PASS,
+	}
+  }
+  let client = nodemailer.createTransport(sgTransport(options));
+  
+
+exports.sendRegistrationMail = (req, res, next) =>{
+	const usersName = req.data.name;
+	const usermail = req.data.email;
+	const token = req.data.token;
+	let url;
+	if(req.data.isUser) {
+		url = "medikcare.com/user/verification/verify/"+token
+	}else if(req.data.isDoctor) {
+		url = "medikcare.com/doctor/verification/verify/"+token
+	}
+	else if(req.data.isAdmin) {
+		url = "medikcare.com/admin/verification/verify/"+token
+	}
+	  
+	  let email = {
+		to: usermail,
+		from: process.env.MAIL_USER,
+		subject: 'Medikcare User Registration',
+		text: 'and easy to do anywhere, even with Node.js',
+		html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">Registration Successful</h1><p><b>Dear ${usersName} </b></p><p>We are glad to inform you that your registration was successful please click on the button below to verify your account.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
+	  };
+	  
+	  client.sendMail(email, function(err, info){
+		  if (err ){
+			console.log(err);
+		  }
+		  else {
+			console.log('Message sent: ' + info);
+		  }
+		  next()
+	  });
+		
 }
 
-const mailer = nodemailer.createTransport(sgTransport(options));
+exports.sendChatMail = (req, res, next) =>{
+		const usermail = req.data.email;
+		const name = req.data.name;
+		const url = req.data.link;
+		const topic = req.data.topic; 
+		const message = req.data.logsDescription;
+		let email = {
+			to: usermail,
+			from: process.env.MAIL_USER,
+			subject: 'Medikcare Notification',
+			text: '',
+			html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">${topic}</h1><p><b>Dear ${name} </b></p><p>${message}.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
+		  };
 
-exports.mailUser = (req, res)=>{
-	const recipient = res.user.email;
-	const mailOption = {
-		from:'medikcare1@gmail.com',
-		to: recipient,
-  		subject: 'Testing medikCare Email Platform',
-  		text: "Testing MedikCare",
-  		html: 'Dear'+req.user.firstname+req.user.lastname+', we are trying to send a mail via sendGrid using node mailer.</p><p>Welcome to medikCare mail we are testing presently but through this medium you will be able to receive mails concerning your coporative account such as</p><ol><li>Savings</li> <li>Emergency Loan</li><li>Shop Loan</li></ol>',
-	};
-	mailer.sendMail(mailOption, (error, info)=>{
-		if (error) {
-			console.log(error);
-		}else{
-			console.log('Message sent');
-		}
+		  client.sendMail(email, function(err, info){
+			if (err ){
+			  console.log(err);
+			}
+			else {
+			  console.log('Message sent: ' + info);
+			}
+			next()
+		});
+}
+
+
+
+
+
+
+
+/*let transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+	  user: process.env.MAIL_USER,
+	  pass: process.env.MAIL_PASS
+	}
+  });
+
+  let mailOptions = {
+	from: process.env.MAIL_USER,
+	to: usermail,
+	subject: 'Medikcare User Registration',
+	html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">Registration Successful</h1><p><b>Dear ${usersName} </b></p><p>We are glad to inform you that your registration was successful please click on the button below to verify your account.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`
+  };
+  transporter.sendMail(mailOptions, function(error, info){
+	if (error) {
+	  console.log("Error")
+	}
+		next();
 	
-	});
-
-}
-
-
+  });*/	

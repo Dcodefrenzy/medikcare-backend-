@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
 		minlenght:1,
 	},
 	age: {
-		type: Number,
+		type: String,
 		require:true,
 		trim: true,
 	},
@@ -53,14 +53,31 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 		minlenght: 6,
 	},
-	validation: {
-		type :Number,
+	image: {
+		filename:{
+			type:String,
+			required:false,
+		},
+		path:{
+			type:String,
+			required:false,
+		}
+	},
+	verification: {
+		type :Boolean,
 		required: true,
 		trim: true,
-		minlenght:1,
 	},
-	deleteAdmin: {
-		type: Number,
+	lastLogin: {
+		type:String,
+		required: true,
+	},
+	loginStatus: {
+		type:Boolean,
+		required:true,
+	},
+	deleteUser: {
+		type: Boolean,
 		required: true, 
 	},
 	deletedBy: {
@@ -91,11 +108,10 @@ const userSchema = new mongoose.Schema({
 	});
 
 	userSchema.methods.toJSON = function(){
-	const user = this;
-	const userObject = user.toObject();
-
-	return _.pick(userObject, ['_id', 'email', 'name',  'phonenumber', 'gender', 'age',]);
-};
+		const user = this;
+		const userObject = user.toObject();
+		return _.pick(userObject, ['_id', 'email', 'firstname', 'lastname',  'phonenumber', 'gender', 'age', 'verification','image', 'lastLogin','loginStatus','dateCreated']);
+	};
 
 
 		//creating an authentication token for user
@@ -104,25 +120,31 @@ const userSchema = new mongoose.Schema({
 		const user = this;
 		const access = 'auth';
 		//using the user id to generate a token which will expire.
-		const token = jwt.sign({_id: user._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: '30m'});
+		const token = jwt.sign({_id: user._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: '12h'});
 	
 		return user.save().then(()=>{
 			return token;
 		});
 	};
-
-	userSchema.statics.findByCredentials = function (email, password){
+userSchema.statics.findByCredentials = function (email, password){
 	const user = this;
 	return user.findOne({email}).then((body)=>{
 		if (!body) {
-			return Promise.reject();
+			const err = {status:400, message:"User do not exist."}
+			return Promise.reject(err);
+		}
+		if(body.deleteUser === true) {
+			const err = {status:400, message:"This user has been deleted."}
+			return Promise.reject(err);
 		}
 		return new Promise((resolve, reject)=>{
 			bcrypt.compare(password, body.password, (err, res)=>{
 				if (res) {
-					resolve(body);
+					return resolve(body);
+					
 				}else{
-					reject();
+					const error = {status:403, message:"Email or password do not exist"}
+					return reject(error);
 				}	
 			})
 		})
@@ -138,13 +160,14 @@ const userSchema = new mongoose.Schema({
 			decode = jwt.verify(token, 'mongsufsrenz##');
 		}catch(e){
 			return new Promise((resolve, reject)=>{
-				return reject();
+				e.status = 401;
+				return reject(e);
 			});
 		}	
 		return user.findOne({
 			'_id':decode._id,
-			'tokens.token': token,
-			'tokens.access': 'auth',
+			//'tokens.token': token,
+			//'tokens.access': 'auth',
 		});
 	}
 

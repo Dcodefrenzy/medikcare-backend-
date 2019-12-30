@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const authUser = require(".../users/usersController.js");
+const authUser = require("../../users/usersController");
 const personalRecordsController = require("./personalRecordsController.js");
+const logsController = require("../../logs/logsController");
 
-/*router.route("/user/:id")
-	.get(authUser.userAuthenticate, personalRecordsController.getPersonalRecords);
-	.patch(authUser.userAuthenticate, personalRecordsController.updatePersonalRecords);
+router.route("/update")
+	.patch(authUser.userAuthenticate, personalRecordsController.UpdatePersonalRecords, logsController.addLogs)
+
+
+	module.exports = router;

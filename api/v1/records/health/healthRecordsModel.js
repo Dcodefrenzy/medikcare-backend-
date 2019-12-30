@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {users} = require("../../users/usersModel");
 
 HealthRecordsSchema = mongoose.Schema({
 		genotype: {
@@ -48,6 +49,7 @@ HealthRecordsSchema = mongoose.Schema({
 		_userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			required:true,
+			ref:users,
 		},
 });
 

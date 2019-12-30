@@ -24,6 +24,11 @@ logSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	status:{
+		type:String,
+		required:false,
+		default:"Unread",
+	},
 	_loggerId: {
 		type: mongoose.Schema.Types.ObjectId,
 		required:true,

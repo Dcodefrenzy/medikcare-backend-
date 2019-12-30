@@ -5,4 +5,4 @@ const HealthRecordsController = require("./healthRecordsController.js");
 
 /*router.route("/user/:id")
 	.get(authUser.userAuthenticate, HealthRecordsController.getHealthRecords);
-	.patch(authUser.userAuthenticate, HealthRecordsController.updateHealthRecords);
+	.patch(authUser.userAuthenticate, HealthRecordsController.updateHealthRecords);*/
