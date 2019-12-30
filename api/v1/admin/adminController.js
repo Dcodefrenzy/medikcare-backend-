@@ -87,7 +87,6 @@ exports.adminLogin = (req, res)=> {
 	});
 
 }
-
 exports.updateAdmin = (req, res)=> {
 	const id = req.params.id;
 	const level = req.body.level;
