@@ -1,23 +1,30 @@
 const express = require("express");
 const app = express();
-const bodyparser = require("body-parser");
+const bodyParser = require("body-parser");
+const multer = require('multer');
+const cors = require("cors");
+const morgan = require("morgan");
 const api = require("./api/v1/api.js");
 
+require('dotenv').config()
 
 
-app.use(bodyparser.json());
-app.use("/api/v1", api);
+const coreOptions = {
+	origin: "http://localhost:3000", 
+	optionsSuccessStatus: 200
+}
 
-//express.static help serve all the file in the whole www folder
-app.use(express.static(__dirname + "/www"));
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+app.use(morgan('dev'));
+app.use(cors(coreOptions));
+ app.use("/api/v1", api); 
 
 
-app.listen(8080, (err)=>{
-	if (err) {
-		return err;
-	}
-	console.log("starting at port 3000");
+
+
+
+app.listen(3000, function(){
+	console.log("started at port 3000");
 });
 
-
-module.exports = {app}; 
