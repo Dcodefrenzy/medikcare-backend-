@@ -9,9 +9,15 @@ const api = require("./api/v1/api.js");
 require('dotenv').config()
 
 
-const coreOptions = {
-	origin: "http://localhost:3000", 
-	optionsSuccessStatus: 200
+const whitelist = ['https://www.medikcare.com/','http://www.medikcare.com/', "http://localhost:3000"]
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
 }
 
 app.use(bodyParser.json({limit: '10mb', extended: true}))
