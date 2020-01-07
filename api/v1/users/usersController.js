@@ -111,7 +111,7 @@ exports.findEmail = (req, res, next)=>{
 
 	users.findOne({email:email}).then((user)=>{
 		if (!user) {
-			const err = {status:404, message:"unable to add user"}
+			const err = {status:404, message:"unable to find user"}
 			return res.status(404).send(err);
 		}
 		return user.generateAuthToken().then((token) =>{
