@@ -52,7 +52,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 		users.findByToken(token).then((body)=>{
 			if (!body) {
 				const error = {status:401, message:"unauthorised person"}
-				return promise.reject(error);
+				res.status(401).send(error);
 			}
 			console.log("token check successful")
 			req.user = body;
@@ -61,7 +61,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 	}).catch((e)=>{
 		console.log(e)
 		const error = {status:e.status, message:e.message}
-		res.status(401).send(e);
+		res.status(401).send(error);
 	});
 }
 
