@@ -52,7 +52,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 		users.findByToken(token).then((body)=>{
 			if (!body) {
 				const error = {status:401, message:"unauthorised person"}
-				return promise.reject();
+				return promise.reject(error);
 			}
 			console.log("token check successful")
 			req.user = body;
