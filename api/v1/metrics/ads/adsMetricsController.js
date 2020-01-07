@@ -1,4 +1,4 @@
-const AdsMetrics = require("./adsmetricsModel.js");
+const AdsMetrics = require("./adsMetricsModel.js");
 const {ObjectID} = require("mongodb");
 
 
