@@ -16,6 +16,9 @@ router.route("/users")
 router.route("/register")
 	.post(controller.adduser,personalController.addPersonalRecords,healthController.addHealthRecords, adsmetricsController.addAdsMetricsUser,mailerController.sendRegistrationMail, logs.addLogs)
 
+router.route("/mail/resend")
+	.post(controller.findEmail, mailerController.sendRegistrationMail, logs.addLogs)
+
 router.route("/users/:id")
 	.get(auth.adminAuthenticate, controller.getuser)
 
