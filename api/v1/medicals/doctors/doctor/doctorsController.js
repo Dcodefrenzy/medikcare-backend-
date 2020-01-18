@@ -278,6 +278,55 @@ exports.getDoctorsAnswers = (req, res)=>{
         res.status(403).send(error);
     }
 }
+exports.findAdminByMail = (req, res)=> {
+	const email = req.body.email;
+
+	doctors.findOne(email).then((doctor)=> {
+	if (!doctor) { 
+		const err ={status:403, message:"No user with this id"};
+		return res.status(403).send(err)
+	}else {
+		return doctor.generateAuthToken().then((token)=>{
+			if(!token) {
+				const err = {status:403, message:"unable to generate toke"}
+				return res.status(403).send(err);
+			}else{	
+				req.data = {status:201,token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,  loggerUser:"Doctor", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:"medikcare.com/doctor/forget-password"}
+				next();
+			}
+		})
+	}
+	}).catch((e) => {
+		return res.status(403).send(e);
+	})
+}
+exports.newPasswordChange =(req, res, next) =>{
+	const _id = req.doctor._id;
+	doctors.findById({_id}).then((doctor)=>{ 
+		const doctorPassword = new doctors({
+			password : req.body.newPassword,
+		})
+		doctors.findOneAndUpdate({_id:_id}, {$set: {password:doctorPassword.password}}, {new:true}).then((doctor)=>{
+				if(!doctor) {
+					const err = {status:403, message:"unable to update password"}
+					return res.status(403).send(err);
+				}else {
+					return doctor.generateAuthToken().then((token)=>{
+						if(!token) {
+							const err = {status:403, message:"unable to generate toke"}
+							return res.status(403).send(err);
+						}else{	
+							req.data = {status:201,token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,  loggerUser:"Doctor", logsDescription:"Password change Was Successful",title:"New Password Change"}
+							next();
+						}
+					})
+				}
+		})
+	}).catch((e)=>{
+		const error = {status:403, message:"Email or password do not exist"}
+		res.status(403).send(error);
+	})
+}
 
 exports.logout =(req, res, next)=>{
 	const id = req.doctor._id;

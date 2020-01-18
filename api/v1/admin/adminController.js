@@ -92,7 +92,7 @@ exports.addAdmin = (req, res, next)=> {
 		level: req.body.level,
 		verification: false,
 		dateCreated: new Date,
-		deleteAdmin: 0,
+		deleteAdmin: false,
 		password: req.body.phoneNumber,
 		_createdBy: req.admin._id
 	});
@@ -171,6 +171,55 @@ exports.passwordChange =(req, res, next) =>{
 				}else {
 					req.data ={status:201,loggerUser:"Admin", logsDescription:"Password change Was Successful",title:"Password Change", _id:admin._id}
 					next();
+				}
+		})
+	}).catch((e)=>{
+		const error = {status:403, message:"Email or password do not exist"}
+		res.status(403).send(error);
+	})
+}
+exports.findAdminByMail = (req, res)=> {
+	const email = req.body.email;
+
+	admins.findOne(email).then((admin)=> {
+	if (!admin) { 
+		const err ={status:403, message:"No user with this id"};
+		return res.status(403).send(err)
+	}else {
+		return admin.generateAuthToken().then((token)=>{
+			if(!token) {
+				const err = {status:403, message:"unable to generate toke"}
+				return res.status(403).send(err);
+			}else{	
+				req.data = {status:201,token:token, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:"medikcare.com/admin/forget-password"}
+				next();
+			}
+		})
+	}
+	}).catch((e) => {
+		return res.status(403).send(e);
+	})
+}
+exports.newPasswordChange =(req, res, next) =>{
+	const _id = req.admin._id;
+	admins.findById({_id}).then((admin)=>{ 
+		const adminPassword = new admins({
+			password : req.body.newPassword,
+		})
+		admins.findOneAndUpdate({_id:_id}, {$set: {password:adminPassword.password}}, {new:true}).then((admin)=>{
+				if(!admin) {
+					const err = {status:403, message:"unable to update password"}
+					return res.status(403).send(err);
+				}else {
+					return admin.generateAuthToken().then((token)=>{
+						if(!token) {
+							const err = {status:403, message:"unable to generate toke"}
+							return res.status(403).send(err);
+						}else{	
+							req.data = {status:201,token:token, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"Password change Was Successful",title:"New Password Change"}
+							next();
+						}
+					})
 				}
 		})
 	}).catch((e)=>{

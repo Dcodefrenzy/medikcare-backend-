@@ -40,6 +40,10 @@ router.route("/suspend/:id")
 
 router.route("/password/change")
 	.patch(controller.adminAuthenticate, controller.passwordChange, logController.addLogs)
+
+
+router.route("/forget/password")
+	.post(controller.findAdminByMail, mailController.sendPasswordMail)
 /*
 router.route("/admin")
 	.get(controller.masterAdminAuthenticate, controller.getAdmin)*/

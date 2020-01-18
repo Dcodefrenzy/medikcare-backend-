@@ -42,6 +42,13 @@ router.route("/profile/update")
 router.route("/chat/session/:id")
         .get(userController.userAuthenticate, doctorsController.findDoctor,mailerController.sendChatMail, logsController.addLogs)
 
+    
+router.route("/forget/password")
+    .post(doctorsController.findAdminByMail, mailerController.sendPasswordMail)
+
+router.route("/update/password")
+    .post(doctorsController.newPasswordChange, logsController.addLogs)
+
 router.route("/logout")
 	 .patch(doctorsController.doctorAuthenticate, doctorsController.logout, logsController.addLogs)
 

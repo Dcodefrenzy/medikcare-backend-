@@ -51,8 +51,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 		var token = req.header('u-auth');
 		users.findByToken(token).then((body)=>{
 			if (!body) {
-				const error = {status:401, message:"unauthorised person"}
-				res.status(401).send(error);
+				return promise.reject();
 			}
 			console.log("token check successful")
 			req.user = body;
@@ -61,7 +60,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 	}).catch((e)=>{
 		console.log(e)
 		const error = {status:e.status, message:e.message}
-		res.status(401).send(error);
+		res.status(401).send(e);
 	});
 }
 
@@ -93,34 +92,6 @@ exports.adduser = (req, res, next)=>{
 			req.data.loggerUser = "User";
 			req.data.logsDescription = "User Registration Was Successful";
 			req.data.title = "Register";
-			req.data.socialMedia = req.body.socialMedia;
-			next();
-		})
-	}).catch((e)=>{
-		let err ={}
-		if(e.errors) {err = {status:403, message:e.errors}}
-		else if(e){err = {status:403, message:e}}
-		res.status(404).send(err);
-	});
-	
-}
-
-exports.findEmail = (req, res, next)=>{
-
-		const email=  req.body.email;
-
-	users.findOne({email:email}).then((user)=>{
-		if (!user) {
-			const err = {status:404, message:"unable to find user"}
-			return res.status(404).send(err);
-		}
-		return user.generateAuthToken().then((token) =>{
-			
-			const userData = {status:201, token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id, isUser:true};
-			req.data = userData;
-			req.data.loggerUser = "User";
-			req.data.logsDescription = "User resending mail.";
-			req.data.title = "resend Mail";
 			req.data.socialMedia = req.body.socialMedia;
 			next();
 		})
@@ -227,6 +198,56 @@ exports.returnUsersForMail = (req, res, next)=>{
 
 	}).catch((e)=>{
 		res.status(404).send("No users");
+	})
+}
+
+exports.findAdminByMail = (req, res)=> {
+	const email = req.body.email;
+
+	users.findOne(email).then((user)=> {
+	if (!user) { 
+		const err ={status:403, message:"No user with this id"};
+		return res.status(403).send(err)
+	}else {
+		return user.generateAuthToken().then((token)=>{
+			if(!token) {
+				const err = {status:403, message:"unable to generate toke"}
+				return res.status(403).send(err);
+			}else{	
+				req.data = {status:201,token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,  loggerUser:"User", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:"medikcare.com/user/forget-password"}
+				next();
+			}
+		})
+	}
+	}).catch((e) => {
+		return res.status(403).send(e);
+	})
+}
+exports.newPasswordChange =(req, res, next) =>{
+	const _id = req.user._id;
+	users.findById({_id}).then((user)=>{ 
+		const userPassword = new doctors({
+			password : req.body.newPassword,
+		})
+		users.findOneAndUpdate({_id:_id}, {$set: {password:userPassword.password}}, {new:true}).then((user)=>{
+				if(!user) {
+					const err = {status:403, message:"unable to update password"}
+					return res.status(403).send(err);
+				}else {
+					return user.generateAuthToken().then((token)=>{
+						if(!token) {
+							const err = {status:403, message:"unable to generate toke"}
+							return res.status(403).send(err);
+						}else{	
+							req.data = {status:201,token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,  loggerUser:"user", logsDescription:"Password change Was Successful",title:"New Password Change"}
+							next();
+						}
+					})
+				}
+		})
+	}).catch((e)=>{
+		const error = {status:403, message:"Email or password do not exist"}
+		res.status(403).send(error);
 	})
 }
 

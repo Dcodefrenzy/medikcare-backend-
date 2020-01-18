@@ -74,7 +74,7 @@ let adminSchema = new mongoose.Schema({
 		required:true,
 	},
 	deleteAdmin: {
-		type: Number,
+		type: Boolean,
 		required: true, 
 	},
 	deletedBy: {
