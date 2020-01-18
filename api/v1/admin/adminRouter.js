@@ -44,6 +44,10 @@ router.route("/password/change")
 
 router.route("/forget/password")
 	.post(controller.findAdminByMail, mailController.sendPasswordMail)
+
+
+router.route("/update/password")
+    .post(controller.adminAuthenticate, controller.newPasswordChange, logController.addLogs)
 /*
 router.route("/admin")
 	.get(controller.masterAdminAuthenticate, controller.getAdmin)*/

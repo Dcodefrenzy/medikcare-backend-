@@ -291,7 +291,7 @@ exports.findAdminByMail = (req, res)=> {
 				const err = {status:403, message:"unable to generate toke"}
 				return res.status(403).send(err);
 			}else{	
-				req.data = {status:201,token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,  loggerUser:"Doctor", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:"medikcare.com/doctor/forget-password"}
+				req.data = {status:201,token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,  loggerUser:"Doctor", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:`medikcare.com/doctor/forget-password/${token}`}
 				next();
 			}
 		})

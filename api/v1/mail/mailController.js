@@ -88,9 +88,11 @@ exports.sendPasswordMail = (req, res, next) =>{
 		  console.log(err);
 		}
 		else {
-		  console.log('Message sent: ' + info);
+			response = {status:201,message:`Hi, ${name} we found your account and have sent a link to your mail for a password update.`}
+			return res.status(201).send(response);
+		  //console.log('Message sent: ' + info);
 		}
-		next()
+		
 	});
 }
 

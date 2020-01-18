@@ -141,7 +141,7 @@ let adminSchema = new mongoose.Schema({
 		if (!body) {
 			return Promise.reject();
 		}
-		if(body.deleteAdmin === 1) {
+		if(body.deleteAdmin === true) {
 			return Promise.reject();
 		}
 		return new Promise((resolve, reject)=>{

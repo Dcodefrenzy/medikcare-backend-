@@ -67,6 +67,7 @@ exports.masterAdminAuthenticate =  (req, res, next)=> {
 		//requesting our token from header.
 		const token = req.header('x-auth');
 		admins.findByToken(token).then((admin)=>{
+			console.log(admin.level)
 			if (!admin) {
 				return promise.reject();
 			}
@@ -74,6 +75,7 @@ exports.masterAdminAuthenticate =  (req, res, next)=> {
 				const error = {status:403, message:"unauthorised person"}
 				 return promise.reject(error);
 			}
+			console.log(admin.level)
 			req.admin = admin;
 			req.token = token;
 
@@ -114,7 +116,8 @@ exports.addAdmin = (req, res, next)=> {
 }
 
 exports.viewAdmins = (req, res)=> {
-	admins.find().then((admins)=>{
+	const level = 2;
+	admins.find({level:level}).then((admins)=>{
 		if(!admins) {
 			const error = {status:404, message:"No Admin Found"}
 			return res.status(404).send(error)
@@ -178,10 +181,10 @@ exports.passwordChange =(req, res, next) =>{
 		res.status(403).send(error);
 	})
 }
-exports.findAdminByMail = (req, res)=> {
+exports.findAdminByMail = (req, res,next)=> {
 	const email = req.body.email;
 
-	admins.findOne(email).then((admin)=> {
+	admins.findOne({email:email}).then((admin)=> {
 	if (!admin) { 
 		const err ={status:403, message:"No user with this id"};
 		return res.status(403).send(err)
@@ -191,12 +194,13 @@ exports.findAdminByMail = (req, res)=> {
 				const err = {status:403, message:"unable to generate toke"}
 				return res.status(403).send(err);
 			}else{	
-				req.data = {status:201,token:token, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:"medikcare.com/admin/forget-password"}
+				req.data = {status:201,token:token, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:`medikcare.com/admin/forget-password/${token}`}
 				next();
 			}
 		})
 	}
 	}).catch((e) => {
+		console.log(e)
 		return res.status(403).send(e);
 	})
 }
@@ -216,7 +220,7 @@ exports.newPasswordChange =(req, res, next) =>{
 							const err = {status:403, message:"unable to generate toke"}
 							return res.status(403).send(err);
 						}else{	
-							req.data = {status:201,token:token, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"Password change Was Successful",title:"New Password Change"}
+							req.data = {status:201,token:token,level:admin.level, email:admin.email, name:admin.firstname +" "+ admin.lastname, _id:admin._id, isAdmin:true, loggerUser:"Admin", logsDescription:"Password change Was Successful",title:"New Password Change"}
 							next();
 						}
 					})
