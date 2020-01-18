@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require(".../admin/adminController.js");
-const adsMetricsController = require("./adsmetricsController.js");
+const adsMetricsController = require("./adsMetricsController.js");
 
 /*router.route("/users")
 	.get(auth.masterAdminAuthenticate, adsMetricsController.getAdMetricsForUsers);
