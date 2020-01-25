@@ -200,18 +200,39 @@ exports.returnUsersForMail = (req, res, next)=>{
 		res.status(404).send("No users");
 	})
 }
+exports.passwordChange =(req, res, next) =>{
+	const email = req.user.email;
+	const oldPassword = req.body.oldPassword;
 
-exports.findAdminByMail = (req, res)=> {
+	users.findByCredentials(email, oldPassword).then((user)=>{ 
+		const userPassword = new users({
+			password : req.body.newPassword,
+		})
+		users.findOneAndUpdate({_id:user._id}, {$set: {password:userPassword.password}}, {new:true}).then((user)=>{
+				if(!user) {
+					const err = {status:403, message:"unable to update password"}
+					return res.status(403).send(err);
+				}else {
+					req.data ={status:201,loggerUser:"User", logsDescription:"Password change Was Successful",title:"Password Change", _id:user._id}
+					next();
+				}
+		})
+	}).catch((e)=>{
+		const error = {status:403, message:"Email or password do not exist"}
+		res.status(403).send(error);
+	})
+}
+exports.findAdminByMail = (req, res,next)=> {
 	const email = req.body.email;
 
-	users.findOne(email).then((user)=> {
+	users.findOne({email:email}).then((user)=> {
 	if (!user) { 
 		const err ={status:403, message:"No user with this id"};
 		return res.status(403).send(err)
 	}else {
 		return user.generateAuthToken().then((token)=>{
 			if(!token) {
-				const err = {status:403, message:"unable to generate toke"}
+				const err = {status:403, message:"unable to generate token"}
 				return res.status(403).send(err);
 			}else{	
 				req.data = {status:201,token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,  loggerUser:"User", logsDescription:"There was a request to update your password. Please click the link below to get a new password",title:"New Password",link:`medikcare.com/user/forget-password/${token}`}
@@ -226,7 +247,7 @@ exports.findAdminByMail = (req, res)=> {
 exports.newPasswordChange =(req, res, next) =>{
 	const _id = req.user._id;
 	users.findById({_id}).then((user)=>{ 
-		const userPassword = new doctors({
+		const userPassword = new users({
 			password : req.body.newPassword,
 		})
 		users.findOneAndUpdate({_id:_id}, {$set: {password:userPassword.password}}, {new:true}).then((user)=>{
@@ -245,7 +266,7 @@ exports.newPasswordChange =(req, res, next) =>{
 					})
 				}
 		})
-	}).catch((e)=>{
+	}).catch((e)=>{console.log(e)
 		const error = {status:403, message:"Email or password do not exist"}
 		res.status(403).send(error);
 	})

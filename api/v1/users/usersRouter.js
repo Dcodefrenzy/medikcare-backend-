@@ -44,14 +44,15 @@ router.route("/profile/update")
 router.route("/logout")
 	 .patch(controller.userAuthenticate, controller.logout, logs.addLogs)
 
-/*router.route("/forgetpassword/:token")
-	.patch(controller.forgetpassword)
-*/
+
+ router.route("/password/change")
+	 .patch(controller.userAuthenticate, controller.passwordChange, logs.addLogs)
+
 router.route("/forget/password")
     .post(controller.findAdminByMail, mailerController.sendPasswordMail)
 
 router.route("/update/password")
-    .post(controller.newPasswordChange, logs.addLogs)
+    .post(controller.userAuthenticate, controller.newPasswordChange, logs.addLogs)
 
 
 module.exports = router;

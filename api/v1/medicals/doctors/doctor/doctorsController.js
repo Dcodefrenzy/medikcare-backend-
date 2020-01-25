@@ -278,10 +278,32 @@ exports.getDoctorsAnswers = (req, res)=>{
         res.status(403).send(error);
     }
 }
-exports.findAdminByMail = (req, res)=> {
+exports.passwordChange =(req, res, next) =>{
+	const email = req.doctor.email;
+	const oldPassword = req.body.oldPassword;
+
+	doctors.findByCredentials(email, oldPassword).then((doctor)=>{ 
+		const doctorPassword = new doctors({
+			password : req.body.newPassword,
+		})
+		doctors.findOneAndUpdate({_id:doctor._id}, {$set: {password:doctorPassword.password}}, {new:true}).then((doctor)=>{
+				if(!doctor) {
+					const err = {status:403, message:"unable to update password"}
+					return res.status(403).send(err);
+				}else {
+					req.data ={status:201,loggerUser:"Doctor", logsDescription:"Password change Was Successful",title:"Password Change", _id:doctor._id}
+					next();
+				}
+		})
+	}).catch((e)=>{
+		const error = {status:403, message:"Email or password do not exist"}
+		res.status(403).send(error);
+	})
+}
+exports.findAdminByMail = (req, res,next)=> {
 	const email = req.body.email;
 
-	doctors.findOne(email).then((doctor)=> {
+	doctors.findOne({email:email}).then((doctor)=> {
 	if (!doctor) { 
 		const err ={status:403, message:"No user with this id"};
 		return res.status(403).send(err)
@@ -322,7 +344,7 @@ exports.newPasswordChange =(req, res, next) =>{
 					})
 				}
 		})
-	}).catch((e)=>{
+	}).catch((e)=>{console.log(e)
 		const error = {status:403, message:"Email or password do not exist"}
 		res.status(403).send(error);
 	})

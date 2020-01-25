@@ -123,6 +123,21 @@ doctorsSchema.pre('save', function(next){
 	}
 });
 
+doctorsSchema.pre('findOneAndUpdate', function(next){
+	var doctor = this.getUpdate(); 
+	if (doctor.$set.password) {
+		bcrypt.genSalt(10, (err, salt)=>{
+			bcrypt.hash(doctor.$set.password, salt, (err, hash)=>{
+				this.getUpdate().$set.password = hash;
+				next();
+			});
+		});
+	}else{
+		next();
+	}
+});
+
+
 doctorsSchema.methods.toJSON = function(){
 	const doctor = this;
 	const doctorObject = doctor.toObject();

@@ -107,6 +107,20 @@ const userSchema = new mongoose.Schema({
 		}
 	});
 
+	userSchema.pre('findOneAndUpdate', function(next){
+		var user = this.getUpdate(); 
+		if (user.$set.password) {
+			bcrypt.genSalt(10, (err, salt)=>{
+				bcrypt.hash(user.$set.password, salt, (err, hash)=>{
+					this.getUpdate().$set.password = hash;
+					next();
+				});
+			});
+		}else{
+			next();
+		}
+	});
+
 	userSchema.methods.toJSON = function(){
 		const user = this;
 		const userObject = user.toObject();
