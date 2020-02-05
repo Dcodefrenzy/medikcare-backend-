@@ -68,6 +68,10 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		trim: true,
 	},
+	playerId: {
+		type :String,
+		required: false,
+	},
 	lastLogin: {
 		type:String,
 		required: true,

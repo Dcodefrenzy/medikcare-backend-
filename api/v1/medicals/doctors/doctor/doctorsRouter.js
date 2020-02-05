@@ -9,6 +9,7 @@ const adminAuth = require("../../../admin/adminController");
 const mailerController = require("../../../mail/mailController");
 
 
+
 router.route("/register")
     .post(doctorsController.doctorRegister, doctorsRecordsController.addDoctorsRecords,metricsController.addAdsMetricsUser, mailerController.sendRegistrationMail, logsController.addLogs);
 
@@ -52,8 +53,13 @@ router.route("/update/password")
     .post(doctorsController.doctorAuthenticate, doctorsController.newPasswordChange, logsController.addLogs)
 
 router.route("/logout")
-	 .patch(doctorsController.doctorAuthenticate, doctorsController.logout, logsController.addLogs)
-
+     .patch(doctorsController.doctorAuthenticate, doctorsController.logout, logsController.addLogs)
+     	
+router.route("/update/notification/:playerId")
+    .patch(doctorsController.doctorAuthenticate, doctorsController.updatePersonNotification)
+		
+router.route("/notify-doctor")
+	.post(userController.userAuthenticate, doctorsController.notifyDoctor)
 
 
     module.exports = router;

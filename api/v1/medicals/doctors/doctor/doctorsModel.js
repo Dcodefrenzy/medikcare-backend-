@@ -68,6 +68,10 @@ doctorsSchema = mongoose.Schema({
 		required: true,
 		trim: true,
     },
+	playerId: {
+		type :String,
+		required: false,
+	},
     adminVerification: {
             verification: {
                 type:Boolean,

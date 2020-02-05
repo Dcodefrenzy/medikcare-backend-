@@ -51,6 +51,10 @@ let adminSchema = new mongoose.Schema({
 		type: Boolean,
 		reqired:true,
 	},
+	playerId: {
+		type :String,
+		required: false,
+	},
 	image: {
 		filename:{
 			type:String,

@@ -6,8 +6,8 @@ const healthController = require("../records/health/healthRecordsController.js")
 const personalController = require("../records/personal/personalRecordsController.js");
 const logs = require("../logs/logsController.js");
 const mailerController = require("../mail/mailController");
+const doctorController = require("../medicals/doctors/doctor/doctorsController");
 const router = express.Router();
-
 
 
 router.route("/users")
@@ -21,6 +21,9 @@ router.route("/users/:id")
 
 router.route("/login")
 	.post(controller.userLogin, logs.addLogs)
+		
+router.route("/notify-user")
+	.post(doctorController.doctorAuthenticate, controller.notifyUser)
 
 router.route("/user-verify")
 		.patch(controller.userAuthenticate, controller.mailVerification)
@@ -49,10 +52,17 @@ router.route("/logout")
 	 .patch(controller.userAuthenticate, controller.passwordChange, logs.addLogs)
 
 router.route("/forget/password")
-    .post(controller.findAdminByMail, mailerController.sendPasswordMail)
+    .post(controller.findUserByMail, mailerController.sendPasswordMail)
 
 router.route("/update/password")
-    .post(controller.userAuthenticate, controller.newPasswordChange, logs.addLogs)
+	.post(controller.userAuthenticate, controller.newPasswordChange, logs.addLogs)
+	
+router.route("/notification")
+    .get(controller.userAuthenticate, controller.sendPersonNotification)	
+	
+router.route("/update/notification/:playerId")
+		.patch(controller.userAuthenticate, controller.updatePersonNotification)
 
+		
 
 module.exports = router;

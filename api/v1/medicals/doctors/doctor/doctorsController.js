@@ -58,7 +58,6 @@ exports.doctorAuthenticate =  (req, res, next)=>{
             }
             req.doctor = body;
             req.token = token;
-
             next();
     }).catch((e)=>{
         const error = {status:e.status, message:e.message}
@@ -114,6 +113,7 @@ exports.doctorLogin = (req, res, next) =>{
         email : req.body.email,
         password : req.body.password
     });
+   const playerId =  req.body.playerId;
     console.log("recieve request");
     
     doctors.findByCredentials(doctor.email, doctor.password).then((doctor)=>{
@@ -124,13 +124,13 @@ exports.doctorLogin = (req, res, next) =>{
                 lastLogin: Date.now,
                 loginStatus: true,
             });
-            doctors.findByIdAndUpdate(doctor._id, {$set: {lastLogin:doctorUpdate.lastLogin, loginStatus:doctorUpdate.loginStatus,}}).then((newDoctor)=>{
+            doctors.findByIdAndUpdate(doctor._id, {$set: {lastLogin:doctorUpdate.lastLogin, loginStatus:doctorUpdate.loginStatus,playerId:playerId}}).then((newDoctor)=>{
                 if(!newDoctor) {
                     const err = {status:403, message:"unable to update login status"}
                     return res.status(403).send(err);
                 }else{
                     console.log("updated doctor loginstatus.")
-                    const doctorDetails = {status:200, token:token, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id};
+                    const doctorDetails = {status:200, token:token, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,playerId:doctor.playerId};
                     res.status(200).send(doctorDetails);
                 }
             }) 
@@ -369,3 +369,74 @@ exports.logout =(req, res, next)=>{
 		res.status(403).send(error);
 	})
 }
+exports.updatePersonNotification=(req, res)=>{
+    const id = req.doctor._id;
+    const playerId = req.params.playerId;
+   doctors.findByIdAndUpdate(id, {$set: { playerId:playerId}}, {new: true}).then((doctor)=>{
+       if (!doctor) {
+           const error = {status:403, message:"Unable to update player id."}
+           res.status(403).send(error);
+       }else {
+     
+           res.status(200).send({status:200});
+       }
+   }).catch((e)=>{
+       const error = {status:403, message:"Unable to logout."}
+       res.status(403).send(error);
+   }) 
+}
+exports.notifyDoctor = (req, res)=>{
+   
+    const _id = req.body.to;
+    const mes = req.body.message;
+   doctors.findById({_id}).then((doctor)=>{
+       if (!doctor) {
+           const error = {status:403, message:"Unable to find user id."}
+           res.status(403).send(error);
+       }else {
+        playerId = doctor.playerId;
+        console.log(playerId);
+        const message = { 
+        app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+        contents: {"en": mes},
+        include_player_ids: [playerId]
+      };
+        if (sendNotification(message)) {     
+        res.status(200).send({status:200});
+        }
+       }
+   }).catch((e)=>{
+       console.log(e)
+       const error = {status:403, message:"Unable to find user."}
+       res.status(403).send(error);
+   }) 
+ }
+ var sendNotification = function(data) {
+	var headers = {
+	  "Content-Type": "application/json; charset=utf-8"
+	};
+	
+	var options = {
+	  host: "onesignal.com",
+	  port: 443,
+	  path: "/api/v1/notifications",
+	  method: "POST",
+	  headers: headers
+	};
+	
+	var https = require('https');
+	var req = https.request(options, function(res) {  
+	  res.on('data', function(data) {
+		console.log("Response:");
+		console.log(JSON.parse(data));
+	  });
+	});
+	
+	req.on('error', function(e) {
+	  console.log("ERROR:");
+	  console.log(e);
+	});
+	
+	req.write(JSON.stringify(data));
+	req.end();
+  };

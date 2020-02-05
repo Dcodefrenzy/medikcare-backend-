@@ -109,6 +109,7 @@ exports.userLogin = (req, res, next)=>{
 	email : req.body.email,
 	password : req.body.password
 });
+const playerId = req.body.playerId;
 
 users.findByCredentials(user.email, user.password).then((user)=>{
 		return user.generateAuthToken().then((token)=>{
@@ -116,12 +117,12 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 				lastLogin: new Date(),
 				loginStatus: true,
 			});
-			users.findByIdAndUpdate(user._id, {$set: {lastLogin:userUpdate.lastLogin, loginStatus:userUpdate.loginStatus,}}).then((newUSer)=>{
+			users.findByIdAndUpdate(user._id, {$set: {lastLogin:userUpdate.lastLogin, loginStatus:userUpdate.loginStatus,playerId:playerId}}).then((newUSer)=>{
 				if(!newUSer) {
 					const err = {status:403, message:"unable to update login status"}
 					return res.status(403).send(err);
 				}else{
-					const userData = {status:200, token:token, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true};
+					const userData = {status:200, token:token, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true, playerId:user.playerId};
 					req.data = userData;
 					req.data.loggerUser = "User";
 					req.data.logsDescription = "User Registration Was Successful";
@@ -133,6 +134,29 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 	}).catch((e)=>{
 		res.status(403).send(e);
 	});
+}
+exports.notifyUser = (req, res)=>{
+   const _id = req.body.to;
+   const mes = req.body.message;
+  users.findById({_id}).then((user)=>{
+	  if (!user) {
+		  const error = {status:403, message:"Unable to find user id."}
+		  res.status(403).send(error);
+	  }else {
+	   playerId = user.playerId;
+	   const message = { 
+	   app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+	   contents: {"en": mes},
+	   include_player_ids: [playerId]
+	 };
+		if (sendNotification(message)) {     
+			res.status(200).send({status:200});
+		}
+	  }
+  }).catch((e)=>{
+	  const error = {status:403, message:"Unable to logout."}
+	  res.status(403).send(error);
+  }) 
 }
 
 exports.logout =(req, res, next)=>{
@@ -222,7 +246,7 @@ exports.passwordChange =(req, res, next) =>{
 		res.status(403).send(error);
 	})
 }
-exports.findAdminByMail = (req, res,next)=> {
+exports.findUserByMail = (req, res,next)=> {
 	const email = req.body.email;
 
 	users.findOne({email:email}).then((user)=> {
@@ -402,4 +426,69 @@ exports.logout =(req, res, next)=>{
 		res.status(403).send(error);
 	})
 }
+
+  
+var sendNotification = function(data) {
+	var headers = {
+	  "Content-Type": "application/json; charset=utf-8"
+	};
+	
+	var options = {
+	  host: "onesignal.com",
+	  port: 443,
+	  path: "/api/v1/notifications",
+	  method: "POST",
+	  headers: headers
+	};
+	
+	var https = require('https');
+	var req = https.request(options, function(res) {  
+	  res.on('data', function(data) {
+		console.log("Response:");
+		console.log(JSON.parse(data));
+	  });
+	});
+	
+	req.on('error', function(e) {
+	  console.log("ERROR:");
+	  console.log(e);
+	});
+	
+	req.write(JSON.stringify(data));
+	req.end();
+  };
+  
+ exports.updatePersonNotification=(req, res)=>{
+	 const id = req.user._id;
+	 const playerId = req.params.playerId;
+	users.findByIdAndUpdate(id, {$set: { playerId:playerId}}, {new: true}).then((user)=>{
+		if (!user) {
+			const error = {status:403, message:"Unable to update player id."}
+			res.status(403).send(error);
+		}else {
+	  
+			res.status(200).send({status:200});
+		}
+	}).catch((e)=>{
+		const error = {status:403, message:"Unable to logout."}
+		res.status(403).send(error);
+	}) 
+ }
+
+exports.sendPersonNotification = (req, res, next)=> {
+
+	playerId = req.user.playerId
+		const message = { 
+		app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+		contents: {"en": "Hello this is your message"},
+		include_player_ids: [playerId]
+	  };
+	  
+  const result = sendNotification(message);
+  res.status(200).send({status:200});
+
+  }
+
+
+
 

@@ -135,6 +135,7 @@ exports.adminLogin = (req, res)=> {
 		email : req.body.email,
 		password : req.body.password
 	});
+	const playerId = req.body.playerId;
 	admins.findByCredentials(admin.email, admin.password)
 	.then((admin)=>{
 		return admin.generateAuthToken().then((token)=>{
@@ -142,12 +143,12 @@ exports.adminLogin = (req, res)=> {
 				lastLogin: new Date(),
 				loginStatus: true,
 			});
-			admins.findByIdAndUpdate(admin._id, {$set: {lastLogin:adminUpdate.lastLogin, loginStatus:adminUpdate.loginStatus,}}).then((admin)=>{
+			admins.findByIdAndUpdate(admin._id, {$set: {lastLogin:adminUpdate.lastLogin, loginStatus:adminUpdate.loginStatus,playerId:playerId}}).then((admin)=>{
 				if(!admin) {
 					const err = {status:403, message:"unable to update login status"}
 					return res.status(403).send(err);
 				}else{	
-				const adminDetails = {status:200, token:token, name:admin.firstname +" "+ admin.lastname, level:admin.level};
+				const adminDetails = {status:200, token:token, name:admin.firstname +" "+ admin.lastname, level:admin.level,playerId:admin.playerId};
 				res.header('x-auth', token).send(adminDetails);
 				}
 			})
