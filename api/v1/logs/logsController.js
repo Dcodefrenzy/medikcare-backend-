@@ -4,6 +4,7 @@ var {ObjectID} = require("mongodb");
 
 exports.addLogs = (req, res)=>{
 	//details of the loan. 
+	console.log(req.data);
 	log = new Logs({
 			title: req.data.title,
 			description: req.data.logsDescription,
@@ -19,7 +20,31 @@ exports.addLogs = (req, res)=>{
 		//console.log(data)
 		res.status(201).send(req.data);
 	}).catch((e)=>{
+		//console.log(e)
 		//sconsole.log(e)
+		res.status(404).send(e);
+	});
+}
+
+
+exports.addLogNext = (req, res, next)=>{
+	//details of the loan. 
+	log = new Logs({
+			title: req.data.title,
+			description: req.data.logsDescriptionTo,
+			loggerUser: req.data.loggerUserTo,
+			_loggerId: req.data._idTo,
+			date:  new Date,
+	});
+	
+	log.save().then((data)=>{
+		if (!data) {
+			return res.status(404).send("Unable to add to logs");
+		}
+		
+		next();
+	}).catch((e)=>{
+		console.log(e)
 		res.status(404).send(e);
 	});
 }
@@ -54,7 +79,7 @@ exports.adminLogs =(req, res)=>{
 
 exports.getUserLogs = (req, res)=>{
 	const _loggerId = req.user.id;
-	Logs.find({_loggerId:_loggerId}).then((logs)=>{
+	Logs.find({_loggerId:_loggerId}, null, {sort: {_id: -1}}).then((logs)=>{
 		if (!logs) {
 			return res.status(404).send("No logs for this user found");
 		}
@@ -63,6 +88,21 @@ exports.getUserLogs = (req, res)=>{
 	}).catch((e)=>{
 		res.status(404).send("No logs")
 	});
+}
+exports.getUserChatLogs = (req, res)=>{
+	const chat = req.params.id;
+	console.log(chat)
+	const _loggerId = req.user._id;
+	Logs.find({_loggerId:_loggerId,title:chat}, null, {sort: {_id: -1}}).then((logs)=>{
+		if (!logs) {
+			return res.status(404).send("No logs for this user found");
+		}
+		log = {status:200, message:logs};
+		res.status(200).send(log)
+	}).catch((e)=>{
+		res.status(404).send("No logs")
+	});
+
 }
 exports.getUserUnreadLogs = (req, res)=>{
 	const _loggerId = req.user.id;
@@ -99,4 +139,49 @@ exports.updateLogs  = (req, res) =>{
 		res.status(404).send(log)
 	});
 }
+
+exports.notifyLogUser = (req, res)=>{
+	const playerId = req.data.playerId;
+	const mes = req.data.logsDescription;
+	const url = req.data.url;
+		const message = { 
+		app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+		contents: {"en": mes},
+		url:url,
+		include_player_ids: [playerId]
+	  };
+		 sendNotification(message)    
+		res.status(201).send({status:201});
+ }
+
+ var sendNotification = function(data) {
+	var headers = {
+	  "Content-Type": "application/json; charset=utf-8"
+	};
+	
+	var options = {
+	  host: "onesignal.com",
+	  port: 443,
+	  path: "/api/v1/notifications",
+	  method: "POST",
+	  headers: headers
+	};
+	
+	var https = require('https');
+	var req = https.request(options, function(res) {  
+	  res.on('data', function(data) {
+		console.log("Response:");
+		console.log(JSON.parse(data));
+	  });
+	});
+	
+	req.on('error', function(e) {
+	  console.log("ERROR:");
+	  console.log(e);
+	});
+	
+	req.write(JSON.stringify(data));
+	req.end();
+  };
+  
 

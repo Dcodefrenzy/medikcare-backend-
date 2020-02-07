@@ -133,7 +133,7 @@ exports.doctorUserRecord = (req, res, next)=> {
             const err = {status:403, message:"We couldnt find any doctor with this id"}
              res.status(403).send(err);
         }else{
-            console.log(doctors)
+            console.log({"here":doctors})
             allDOctors = {status:200, message:doctors}
            res.status(200).send(allDOctors);
         }

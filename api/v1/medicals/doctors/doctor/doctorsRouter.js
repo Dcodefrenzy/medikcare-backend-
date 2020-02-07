@@ -41,7 +41,7 @@ router.route("/profile/update")
 	.patch(doctorsController.doctorAuthenticate, doctorsController.updateDoctor, logsController.addLogs)
    
 router.route("/chat/session/:id")
-        .get(userController.userAuthenticate, doctorsController.findDoctor,mailerController.sendChatMail, logsController.addLogs)
+        .get(userController.userAuthenticate, doctorsController.findDoctor,mailerController.sendChatMail,logsController.addLogNext, logsController.addLogs)
 
 router.route("/password/change")
         .patch(doctorsController.doctorAuthenticate, doctorsController.passwordChange, logsController.addLogs)

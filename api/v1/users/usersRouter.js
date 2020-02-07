@@ -7,6 +7,10 @@ const personalController = require("../records/personal/personalRecordsControlle
 const logs = require("../logs/logsController.js");
 const mailerController = require("../mail/mailController");
 const doctorController = require("../medicals/doctors/doctor/doctorsController");
+const doctortmetricsController = require("../metrics/doctorsMetric/doctorsMetricController");
+const chatmetricsController = require("../metrics/chat/chatMetricController");
+
+const reportController = require("../records/reports/reportsRecordsController");
 const router = express.Router();
 
 
@@ -62,6 +66,10 @@ router.route("/notification")
 	
 router.route("/update/notification/:playerId")
 		.patch(controller.userAuthenticate, controller.updatePersonNotification)
+
+router.route("/chatMetric/add")
+		.post(controller.userAuthenticate, chatmetricsController.addChatMetricsUser, doctortmetricsController.addDoctorMetricsUser, logs.addLogNext, reportController.addIncompleteReportRecord, doctorController.findDoctorByID,mailerController.sendChatMail, logs.notifyLogUser)	
+		
 
 		
 

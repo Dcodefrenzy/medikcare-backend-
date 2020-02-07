@@ -125,7 +125,7 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 					const userData = {status:200, token:token, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true, playerId:user.playerId};
 					req.data = userData;
 					req.data.loggerUser = "User";
-					req.data.logsDescription = "User Registration Was Successful";
+					req.data.logsDescription = "User Login Was Successful";
 					req.data.title = "Login";
 					next();
 				}

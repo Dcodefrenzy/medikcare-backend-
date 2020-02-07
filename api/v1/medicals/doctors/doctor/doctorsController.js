@@ -232,8 +232,30 @@ exports.findDoctor = (req, res, next) => {
             req.data.title = "Chat";
             req.data.topic = "New chat session"
             req.data.link = "medikcare.com/chat/patience/"+doctor._id;
+            req.data.loggerUserTo = "USer";
+            req.data.logsDescriptionTo = "You have started a medical consultation.";
+            req.data._idTo = req.user._id;
                 next();
 
+        }
+    }).catch((e)=>{
+        res.status(403).send(e);
+    })
+}
+
+exports.findDoctorByID = (req, res, next) => {
+    const _id = req.body._doctorId;
+    console.log(_id);
+    doctors.findById(_id).then((doctor)=>{
+        if(!doctors) {
+            const error = {status:403, message:"No doctors registered yet"}
+            return res.status(403).send(error);
+        }else {
+             req.data.email = doctor.email;
+            req.data.name =doctor.firstname +" "+ doctor.lastname;
+            req.data.playerId =doctor.playerId;
+            req.data._id = doctor._id;
+                next();
         }
     }).catch((e)=>{
         res.status(403).send(e);

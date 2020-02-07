@@ -18,6 +18,10 @@ router.route("/admin")
 router.route("/user")
 	.get(userController.userAuthenticate,   controller.getUserLogs)
 
+
+router.route("/user/:id")
+	.get(userController.userAuthenticate,   controller.getUserChatLogs)
+
 	router.route("/unread/user")
 	.get(userController.userAuthenticate,   controller.getUserUnreadLogs)
 

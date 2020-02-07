@@ -56,7 +56,7 @@ exports.sendChatMail = (req, res, next) =>{
 			from: process.env.MAIL_USER,
 			subject: 'Medikcare Notification',
 			text: '',
-			html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">${topic}</h1><p><b>Dear ${name} </b></p><p>${message}.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
+			html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">${topic}</h1><p><b>Dear ${name} </b></p><p>${message}.</p> <a href=${url} style="margin-top:50px;background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
 		  };
 
 		  client.sendMail(email, function(err, info){
