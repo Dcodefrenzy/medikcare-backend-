@@ -426,7 +426,25 @@ exports.logout =(req, res, next)=>{
 		res.status(403).send(error);
 	})
 }
-
+exports.findUserByID = (req, res, next) => {
+    const _id = req.body._userId;
+ 
+    users.findById(_id).then((user)=>{
+        if(!user) {
+            const error = {status:403, message:"No user registered yet"}
+            return res.status(403).send(error);
+        }else {
+             req.data.email = user.email;
+            req.data.name =user.firstname +" "+ user.lastname;
+            req.data.playerId =user.playerId;
+            req.data._id = user._id;
+                next();
+        }
+    }).catch((e)=>{
+		console.log(e)
+        res.status(403).send(e);
+    })
+}
   
 var sendNotification = function(data) {
 	var headers = {

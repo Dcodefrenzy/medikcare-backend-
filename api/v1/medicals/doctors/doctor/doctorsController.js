@@ -407,7 +407,7 @@ exports.updatePersonNotification=(req, res)=>{
        res.status(403).send(error);
    }) 
 }
-exports.notifyDoctor = (req, res)=>{
+ exports.notifyDoctor  = async (req, res)=>{
    
     const _id = req.body.to;
     const mes = req.body.message;
@@ -417,15 +417,14 @@ exports.notifyDoctor = (req, res)=>{
            res.status(403).send(error);
        }else {
         playerId = doctor.playerId;
-        console.log(playerId);
+        
         const message = { 
         app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
         contents: {"en": mes},
         include_player_ids: [playerId]
       };
-        if (sendNotification(message)) {     
+        sendNotification(message);  
         res.status(200).send({status:200});
-        }
        }
    }).catch((e)=>{
        console.log(e)

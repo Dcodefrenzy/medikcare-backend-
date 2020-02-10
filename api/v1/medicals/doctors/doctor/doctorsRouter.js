@@ -7,6 +7,8 @@ const logsController = require("../../../logs/logsController");
 const metricsController = require("../../../metrics/ads/adsMetricsController");
 const adminAuth = require("../../../admin/adminController");
 const mailerController = require("../../../mail/mailController");
+const chatmetricsController = require("../../../metrics/chat/chatMetricController");
+const userReportController = require("./../../../records/reports/reportsRecordsController");
 
 
 
@@ -58,8 +60,12 @@ router.route("/logout")
 router.route("/update/notification/:playerId")
     .patch(doctorsController.doctorAuthenticate, doctorsController.updatePersonNotification)
 		
+router.route("/report/add")
+    .post(doctorsController.doctorAuthenticate, userReportController.addCompleteReportRecord, logsController.addLogNext, userController.findUserByID,mailerController.sendChatMail, logsController.notifyLogUser)
+
 router.route("/notify-doctor")
-	.post(userController.userAuthenticate, doctorsController.notifyDoctor)
+    .post(userController.userAuthenticate, doctorsController.notifyDoctor)
+
 
 
     module.exports = router;

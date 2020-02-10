@@ -27,7 +27,7 @@ exports.sendRegistrationMail = (req, res, next) =>{
 	  
 	  let email = {
 		to: usermail,
-		from: process.env.MAIL_USER,
+		from: "support@medikcare.com",
 		subject: 'Medikcare User Registration',
 		text: 'and easy to do anywhere, even with Node.js',
 		html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">Registration Successful</h1><p><b>Dear ${usersName} </b></p><p>We are glad to inform you that your registration was successful please click on the button below to verify your account.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
