@@ -132,6 +132,7 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 			}) 
 		})
 	}).catch((e)=>{
+		console.log(e)
 		res.status(403).send(e);
 	});
 }
