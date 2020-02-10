@@ -417,9 +417,9 @@ exports.updatePersonNotification=(req, res)=>{
            res.status(403).send(error);
        }else {
         playerId = doctor.playerId;
-        
+        let appid = process.env.APPID_PROD || process.env.APPID_LOCAL
         const message = { 
-        app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+        app_id: appid,
         contents: {"en": mes},
         include_player_ids: [playerId]
       };

@@ -53,7 +53,7 @@ exports.sendChatMail = (req, res, next) =>{
 		const message = req.data.logsDescription;
 		let email = {
 			to: usermail,
-			from: process.env.MAIL_USER,
+			from: "support@medikcare.com",
 			subject: 'Medikcare Notification',
 			text: '',
 			html: `<div style="border:1px solid #fff; padding-top:20px;"><h1 style="text-align:center">${topic}</h1><p><b>Dear ${name} </b></p><p>${message}.</p> <a href=${url} style="margin-top:50px;background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
