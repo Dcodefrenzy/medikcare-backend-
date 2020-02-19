@@ -416,6 +416,7 @@ exports.updatePersonNotification=(req, res)=>{
            const error = {status:403, message:"Unable to find user id."}
            res.status(403).send(error);
        }else {
+           console.log(doctor)
         playerId = doctor.playerId;		
         let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
         const message = { 
