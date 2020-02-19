@@ -144,8 +144,9 @@ exports.notifyLogUser = (req, res)=>{
 	const playerId = req.data.playerId;
 	const mes = req.data.logsDescription;
 	const url = req.data.url;
+	let appid = process.env.APPID_PROD || process.env.APPID_LOCAL
 		const message = { 
-		app_id: "49bc3735-1264-4e8a-a146-f4291107deba",
+			appId: appid,
 		contents: {"en": mes},
 		url:url,
 		include_player_ids: [playerId]

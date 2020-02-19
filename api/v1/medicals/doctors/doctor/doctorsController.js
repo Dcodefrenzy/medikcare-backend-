@@ -118,7 +118,7 @@ exports.doctorLogin = (req, res, next) =>{
     
     doctors.findByCredentials(doctor.email, doctor.password).then((doctor)=>{
         return doctor.generateAuthToken().then((token)=>{
-            console.log("get user and return a token");
+            //console.log("get user and return a token");
 
             const doctorUpdate = new doctors({
                 lastLogin: Date.now,
@@ -219,7 +219,7 @@ exports.doctors = (req, res, next) => {
 
 exports.findDoctor = (req, res, next) => {
     const _id = req.params.id;
-    console.log(_id);
+    //console.log(_id);
     doctors.findById(_id).then((doctor)=>{
         if(!doctors) {
             const error = {status:403, message:"No doctors registered yet"}
@@ -416,8 +416,8 @@ exports.updatePersonNotification=(req, res)=>{
            const error = {status:403, message:"Unable to find user id."}
            res.status(403).send(error);
        }else {
-        playerId = doctor.playerId;
-        let appid = process.env.APPID_PROD || process.env.APPID_LOCAL
+        playerId = doctor.playerId;		
+        let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
         const message = { 
         app_id: appid,
         contents: {"en": mes},

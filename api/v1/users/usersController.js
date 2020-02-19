@@ -146,7 +146,7 @@ exports.notifyUser = (req, res)=>{
 	  }else {
 	   playerId = user.playerId;
 	   
-		let appid = process.env.APPID_PROD || process.env.APPID_LOCAL
+		let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
 	   const message = { 
 	   app_id: appid,
 	   contents: {"en": mes},
@@ -499,7 +499,7 @@ var sendNotification = function(data) {
 exports.sendPersonNotification = (req, res, next)=> {
 
 	playerId = req.user.playerId
-		let appid = process.env.APPID_PROD || process.env.APPID_LOCAL
+		let appid = "49bc3735-1264-4e8a-a146-f4291107deba"
 		const message = { 
 		app_id: appid,
 		contents: {"en": "Hello this is your message"},
