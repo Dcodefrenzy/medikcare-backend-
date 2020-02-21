@@ -408,7 +408,7 @@ exports.updatePersonNotification=(req, res)=>{
    }) 
 }
  exports.notifyDoctor  = async (req, res)=>{
-   
+   console.log({"req.body":req.body})
     const _id = req.body.to;
     const mes = req.body.message;
    doctors.findById({_id}).then((doctor)=>{
