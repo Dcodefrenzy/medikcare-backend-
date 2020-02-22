@@ -113,7 +113,6 @@ exports.doctorLogin = (req, res, next) =>{
         email : req.body.email,
         password : req.body.password
     });
-   const playerId =  req.body.playerId;
     console.log("recieve request");
     
     doctors.findByCredentials(doctor.email, doctor.password).then((doctor)=>{
@@ -124,7 +123,7 @@ exports.doctorLogin = (req, res, next) =>{
                 lastLogin: Date.now,
                 loginStatus: true,
             });
-            doctors.findByIdAndUpdate(doctor._id, {$set: {lastLogin:doctorUpdate.lastLogin, loginStatus:doctorUpdate.loginStatus,playerId:playerId}}).then((newDoctor)=>{
+            doctors.findByIdAndUpdate(doctor._id, {$set: {lastLogin:doctorUpdate.lastLogin, loginStatus:doctorUpdate.loginStatus}}).then((newDoctor)=>{
                 if(!newDoctor) {
                     const err = {status:403, message:"unable to update login status"}
                     return res.status(403).send(err);

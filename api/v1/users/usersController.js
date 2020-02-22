@@ -109,7 +109,6 @@ exports.userLogin = (req, res, next)=>{
 	email : req.body.email,
 	password : req.body.password
 });
-const playerId = req.body.playerId;
 
 users.findByCredentials(user.email, user.password).then((user)=>{
 		return user.generateAuthToken().then((token)=>{
@@ -117,7 +116,7 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 				lastLogin: new Date(),
 				loginStatus: true,
 			});
-			users.findByIdAndUpdate(user._id, {$set: {lastLogin:userUpdate.lastLogin, loginStatus:userUpdate.loginStatus,playerId:playerId}}).then((newUSer)=>{
+			users.findByIdAndUpdate(user._id, {$set: {lastLogin:userUpdate.lastLogin, loginStatus:userUpdate.loginStatus}}).then((newUSer)=>{
 				if(!newUSer) {
 					const err = {status:403, message:"unable to update login status"}
 					return res.status(403).send(err);
