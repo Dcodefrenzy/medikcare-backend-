@@ -13,6 +13,11 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
             });
+            
+            if (req.user._id !== req.body._userId) {
+                const error = {status:401, message:"You are trying to enter a report thats not yours."}
+                return res.status(401).send(error); 
+            }
             ReportsRecord.save().then((record)=>{
                 if (!record) {
                      
@@ -23,7 +28,6 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
                      req.data.topic = "Fill User Medical Report"; 
                      req.data.logsDescription = req.user.firstname+" "+req.user.lastname+" has ended a session with you and you were rated "+req.body.metric+" ("+req.body.metricTitle+"). Please click on the link below to fill the medical report. If you have already filled it you can ignore this request.";
                      req.data.loggerUser = "Doctor";
-                     console.log(req.data.logsDescription)
                      next();
               }       
             })
@@ -33,7 +37,7 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
             req.data.link = "https://medikcare.com/reports/"+req.body._userId+"/"+req.body.chatSessionId;
             req.data.topic = "Fill User Medical Report"; 
             req.data.logsDescription = req.user.firstname+" "+req.user.lastname+" has ended a session with you and you were rated "+req.body.metric+" out of 5 stars. Patient Commented that the session was: "+req.body.metricTitle+". Please click on the link below to fill the medical report. If you have already filled it you can ignore this request";
-            console.log(req.data.logsDescription)
+           
             next();
         }
     }).catch((e)=>{
@@ -59,6 +63,10 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
             });
+            if (req.doctor._id !== req.body._doctorId) {
+                const error = {status:401, message:"You are trying to enter a report thats not yours."}
+                return res.status(401).send(error); 
+            }
             ReportsRecord.save().then((record)=>{
                 if (!record) {
                      
@@ -66,7 +74,9 @@ exports.addCompleteReportRecord = (req, res, next)=>{
 			return res.status(404).send(error); 
                 }else if (record) {
                     req.data = {}
+                    req.data.title = "Medical chat Session Ended"
                     req.data.link = "https://medikcare.com/chat/feedback/"+req.doctor._id+"/"+req.body.chatSessionId;
+                    req.data.title = "Medical chat Session Ended"
                      req.data.topic = "Your Medical Report Is Ready"; 
                      req.data.logsDescription = "Dr "+req.doctor.firstname+" "+req.doctor.lastname+" has ended a medical session with you and has filled your medical report. Please check your dashboard to see your doctor's report. Also, Please click on the link below to share your experince using oursite thank. If you have already filled it you can ignore this request.";
                      req.data.loggerUser = "User";	
@@ -78,7 +88,9 @@ exports.addCompleteReportRecord = (req, res, next)=>{
               }       
             })
             
-        }else {
+        }else if(report.complete === true) {
+            res.status(200).send({status:200});
+        } else {
          rec   = new ReportsRecords({
                 medication:req.body.medication,
                 test:req.body.test,
@@ -91,6 +103,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
 			        return res.status(404).send(error); 
                 }else{
                    req.data = {}
+                   req.data.title = "Medical chat Session Ended"
                     req.data.link = "https://medikcare.com/chat/feedback/"+req.doctor._id+"/"+req.body.chatSessionId;
                     req.data.topic = "Your Medical Report Is Ready"; 
                     req.data.logsDescription = "Dr "+req.doctor.firstname+" "+req.doctor.lastname+" has ended a medical session with you and has filled your medical report. Please check your dashboard to see your doctor's report. Also, Please click on the link below to share your experince using oursite thank. If you have already filled it you can ignore this request.";
