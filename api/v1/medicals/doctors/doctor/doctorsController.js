@@ -216,6 +216,8 @@ exports.doctors = (req, res, next) => {
     })
 }
 
+
+
 exports.findDoctor = (req, res, next) => {
     const _id = req.params.id;
     //console.log(_id);
