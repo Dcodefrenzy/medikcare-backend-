@@ -10,7 +10,40 @@ let options = {
   }
   let client = nodemailer.createTransport(sgTransport(options));
   
-
+exports.mailUsers = (req, res)=>{
+	const usersName = req.data.name;
+	const usermail = req.data.email;
+	const token = req.data.token;
+	let url;
+	if(req.data.isUser) {
+		url = "medikcare.com/user/verification/verify/"+token
+	}else if(req.data.isDoctor) {
+		url = "medikcare.com/doctor/verification/verify/"+token
+	}
+	else if(req.data.isAdmin) {
+		url = "medikcare.com/admin/verification/verify/"+token
+	}
+	  
+	  let email = {
+		to: usermail,
+		from: `"medikcare" support@medikcare.com`,
+		subject: 'Medikcare User Registration',
+		text: '',
+		html: `<div style="border:3px solid #fff; padding-top:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /><h1 style="text-align:center">Registration Successful</h1><p><b>Dear ${usersName} </b></p><p style="margin-bottom:50px">We are glad to inform you that your registration was successful please click on the button below to verify your account.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a><div>`,
+	
+		 };
+	  
+	  client.sendMail(email, function(err, info){
+		  if (err ){
+			console.log(err);
+			res.status(403).send({status:403});
+		  }
+		  else {
+			console.log('Message sent: ' + info);
+			res.status(200).send({status:200});
+		  }
+	  });	
+}
 exports.sendRegistrationMail = (req, res, next) =>{
 	const usersName = req.data.name;
 	const usermail = req.data.email;

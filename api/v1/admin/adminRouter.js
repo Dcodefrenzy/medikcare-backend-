@@ -63,6 +63,13 @@ router.route("/ads-metrics")
 
 router.route("/growth-metrics")
 		.get(controller.adminAuthenticate, userController.viewusers)
+
+
+router.route("/resend-user-mail/:id")
+		.get(controller.adminAuthenticate, userController.findAdminUserByID, mailController.mailUsers)
+		
+router.route("/resend-doctor-mail/:id")
+		.get(controller.adminAuthenticate, doctorController.findAdminDoctorByID, mailController.mailUsers)
 /*
 router.route("/admin")
 	.get(controller.masterAdminAuthenticate, controller.getAdmin)*/

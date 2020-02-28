@@ -262,6 +262,27 @@ exports.findDoctorByID = (req, res, next) => {
         res.status(403).send(e);
     })
 }
+exports.findAdminDoctorByID = (req, res, next) => {
+    const _id = req.params.id;
+
+    doctors.findById({_id:_id}).then((doctor)=>{
+        if(!doctors) {
+            const error = {status:403, message:"No doctors registered yet"}
+            return res.status(403).send(error);
+        }else {
+			req.data = _id;
+             req.data.email = doctor.email;
+            req.data.name =doctor.firstname +" "+ doctor.lastname;
+            req.data.playerId =doctor.playerId;
+            req.data._id = doctor._id;
+            req.data.isDoctor = true;
+                next();
+        }
+    }).catch((e)=>{
+       // console.log(e)
+        res.status(403).send(e);
+    })
+}
 
 exports.getDoctorsAnswers = (req, res)=>{
      req.data.answers.map(async (answer, index)=>{

@@ -34,6 +34,7 @@ router.route("/user-verify")
 
 router.route("/admin/:id")
 	.get(auth.adminAuthenticate, controller.findUser, personalController.getPersonalRecords)
+	
 router.route("/:id")
 	//.get(controller.getuser)
 	//.patch(controller.userAuthenticate, controller.updateuser)

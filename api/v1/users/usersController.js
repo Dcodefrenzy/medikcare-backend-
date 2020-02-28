@@ -454,7 +454,30 @@ exports.findUserByID = (req, res, next) => {
              req.data.email = user.email;
             req.data.name =user.firstname +" "+ user.lastname;
             req.data.playerId =user.playerId;
-            req.data._id = user._id;
+			req.data._id = user._id;
+			req.data.isUser = true;
+                next();
+        }
+    }).catch((e)=>{
+		console.log(e)
+        res.status(403).send(e);
+    })
+}
+  
+exports.findAdminUserByID = (req, res, next) => {
+    const _id = req.params.id;
+ 
+    users.findById({_id:_id}).then((user)=>{
+        if(!user) {
+            const error = {status:403, message:"No user registered yet"}
+            return res.status(403).send(error);
+        }else {
+			req.data = _id;
+             req.data.email = user.email;
+            req.data.name =user.firstname +" "+ user.lastname;
+            req.data.playerId =user.playerId;
+			req.data._id = user._id;
+			req.data.isUser = true;
                 next();
         }
     }).catch((e)=>{
