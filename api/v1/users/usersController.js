@@ -472,12 +472,7 @@ exports.findAdminUserByID = (req, res, next) => {
             const error = {status:403, message:"No user registered yet"}
             return res.status(403).send(error);
         }else {
-			req.data = _id;
-             req.data.email = user.email;
-            req.data.name =user.firstname +" "+ user.lastname;
-            req.data.playerId =user.playerId;
-			req.data._id = user._id;
-			req.data.isUser = true;
+			req.data = {email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true}
                 next();
         }
     }).catch((e)=>{

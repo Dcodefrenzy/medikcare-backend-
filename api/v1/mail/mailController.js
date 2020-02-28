@@ -11,6 +11,7 @@ let options = {
   let client = nodemailer.createTransport(sgTransport(options));
   
 exports.mailUsers = (req, res)=>{
+	console.log(req.data)
 	const usersName = req.data.name;
 	const usermail = req.data.email;
 	const token = req.data.token;
@@ -81,7 +82,7 @@ exports.sendRegistrationMail = (req, res, next) =>{
 
 exports.sendWelcomeMail = (req, res, next) =>{
 	let usersName, usermail;
-	if(req.data.isUser === true){
+	if(req.isUser === true){
 		usersName = req.user.firstname+" "+req.user.lastname;
 		usermail = req.user.email;
 	}else{

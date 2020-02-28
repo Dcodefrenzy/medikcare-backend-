@@ -270,12 +270,8 @@ exports.findAdminDoctorByID = (req, res, next) => {
             const error = {status:403, message:"No doctors registered yet"}
             return res.status(403).send(error);
         }else {
-			req.data = _id;
-             req.data.email = doctor.email;
-            req.data.name =doctor.firstname +" "+ doctor.lastname;
-            req.data.playerId =doctor.playerId;
-            req.data._id = doctor._id;
-            req.data.isDoctor = true;
+            
+			req.data = {email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,isDoctor:true}
                 next();
         }
     }).catch((e)=>{
