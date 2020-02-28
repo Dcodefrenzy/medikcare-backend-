@@ -472,8 +472,10 @@ exports.findAdminUserByID = (req, res, next) => {
             const error = {status:403, message:"No user registered yet"}
             return res.status(403).send(error);
         }else {
-			req.data = {email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true}
-                next();
+			return user.generateAuthToken().then((token)=>{
+				req.data = {status:200, token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true};
+				next();
+			})
         }
     }).catch((e)=>{
 		console.log(e)

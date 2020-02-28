@@ -270,9 +270,10 @@ exports.findAdminDoctorByID = (req, res, next) => {
             const error = {status:403, message:"No doctors registered yet"}
             return res.status(403).send(error);
         }else {
-            
-			req.data = {email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,isDoctor:true}
-                next();
+            return doctor.generateAuthToken().then((token)=>{
+                req.data = {status:200, token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id};
+               next()
+            })
         }
     }).catch((e)=>{
        // console.log(e)
