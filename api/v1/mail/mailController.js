@@ -81,7 +81,7 @@ exports.sendRegistrationMail = (req, res, next) =>{
 
 exports.sendWelcomeMail = (req, res, next) =>{
 	let usersName, usermail;
-	if(req.isUser === true){
+	if(req.data.isUser === true){
 		usersName = req.user.firstname+" "+req.user.lastname;
 		usermail = req.user.email;
 	}else{
