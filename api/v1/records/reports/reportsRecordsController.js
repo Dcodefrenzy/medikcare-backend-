@@ -12,6 +12,7 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
                     _doctorId: req.body._doctorId,
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
+                    dateCreated:Date.now()
             });
             
             if (req.user._id !== req.body._userId) {
@@ -62,6 +63,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     _doctorId: req.body._doctorId,
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
+                    dateCreated:Date.now()
             });
             if (req.doctor._id !== req.body._doctorId) {
                 const error = {status:401, message:"You are trying to enter a report thats not yours."}
@@ -129,3 +131,20 @@ exports.addCompleteReportRecord = (req, res, next)=>{
 
 }
 
+ exports.getUserReports = (req,res)=>{
+    const _userId = req.user._id;
+ 
+    ReportsRecords.find({_userId:_userId,complete:true}, null, {sort: {_id: -1}}).then((reports)=>{
+        if (!reports) {
+            res.status(404).send({status:404,message:"No reports"})
+        }else if (reports.length < 1) {
+            
+            res.status(404).send({status:404,message:"No reports yet"})
+        }else{
+            res.status(200).send({status:200,message:reports});
+        }
+    }).catch((e)=>{
+        console.log(e)
+        res.status(404).send({status:404,message:"No reports"})
+    })
+}

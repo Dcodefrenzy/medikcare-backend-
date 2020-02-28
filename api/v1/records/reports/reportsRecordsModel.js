@@ -17,7 +17,6 @@ ReportsRecordsSchema = mongoose.Schema({
 		dateCreated:{
 			type: String,
             required: true,
-            default:Date.now,
         },
         complete:{
             type:Boolean,

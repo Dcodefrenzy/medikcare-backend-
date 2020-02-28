@@ -66,6 +66,9 @@ router.route("/notification")
 	
 router.route("/update/notification/:playerId")
 		.patch(controller.userAuthenticate, controller.updatePersonNotification)
+		
+router.route("/reports")
+	.get(controller.userAuthenticate, reportController.getUserReports)
 
 router.route("/chatMetric/add")
 		.post(controller.userAuthenticate, chatmetricsController.addChatMetricsUser, doctortmetricsController.addDoctorMetricsUser, logs.addLogNext, reportController.addIncompleteReportRecord, doctorController.findDoctorByID,mailerController.sendChatMail, logs.notifyLogUser)	
