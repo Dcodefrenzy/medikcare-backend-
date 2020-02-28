@@ -26,6 +26,17 @@ exports.addAdsMetricsUser = (req, res,next)=>{
 	});
 }
 
+exports.getAdsMetricsForAll = (req, res, next)=>{
+	AdsMetrics.countDocuments().then((count)=>{
+		req.metric.adsMetric=count;
+		next();
+	})
+}
+exports.getAdminAdsMetricsForAll = (req, res, next)=>{
+	AdsMetrics.find().then((adsMetric)=>{
+		res.status(200).send({status:200,message:adsMetric});
+	})
+}
 
 /*exports.getAdMetricsForDoctors = (req, res)=>{
 

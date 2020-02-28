@@ -58,3 +58,11 @@ exports.getQuestion = (req, res, next) => {
        res.status(403).send(e);
     });
 }
+
+
+exports.getQuestionMetrics = (req, res, next)=>{
+	healthQuestions.countDocuments().then((count)=>{
+		req.metric.questionMetric = count;
+		next();
+	})
+}

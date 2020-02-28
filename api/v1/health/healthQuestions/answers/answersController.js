@@ -97,3 +97,10 @@ exports.doctorAgrees = (req, res, next)=>{
         res.status(403).send(e)
     });
 }
+
+exports.getMetricsAnswers=(req, res, next)=>{
+	answers.countDocuments().then((count)=>{
+		req.metric.answerMetric = count;
+		next();
+	})
+}

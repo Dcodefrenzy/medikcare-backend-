@@ -2,6 +2,11 @@ const express = require("express");
 const controller = require("./adminController.js");
 const mailController = require("../mail/mailController")
 const logController = require("../logs/logsController");
+const userController = require("../users/usersController");
+const doctorController = require("../medicals/doctors/doctor/doctorsController");
+const healthQuestionController = require("../health/healthQuestions/questions/healthQuestionsController");
+const healthQuestionAnswersController = require("../health/healthQuestions/answers/answersController");
+const adsMetricsController = require("../metrics/ads/adsMetricsController");
 const router = express.Router();
 
 
@@ -47,7 +52,17 @@ router.route("/forget/password")
 
 
 router.route("/update/password")
-    .post(controller.adminAuthenticate, controller.newPasswordChange, logController.addLogs)
+	.post(controller.adminAuthenticate, controller.newPasswordChange, logController.addLogs)
+
+router.route("/metrics")
+	.get(controller.adminAuthenticate, userController.getUsersMetric, doctorController.getDoctorsMetric,healthQuestionController.getQuestionMetrics,adsMetricsController.getAdsMetricsForAll,healthQuestionAnswersController.getMetricsAnswers,controller.getAllMetrics)
+
+router.route("/ads-metrics")
+		.get(controller.adminAuthenticate, adsMetricsController.getAdminAdsMetricsForAll)
+
+
+router.route("/growth-metrics")
+		.get(controller.adminAuthenticate, userController.viewusers)
 /*
 router.route("/admin")
 	.get(controller.masterAdminAuthenticate, controller.getAdmin)*/

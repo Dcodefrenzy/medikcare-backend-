@@ -463,3 +463,10 @@ exports.updatePersonNotification=(req, res)=>{
 	req.write(JSON.stringify(data));
 	req.end();
   };
+
+  exports.getDoctorsMetric = (req, res, next)=>{
+    doctors.countDocuments().then((count)=>{
+      req.metric.doctorMetric =count;
+      next();
+    })
+}

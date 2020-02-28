@@ -360,3 +360,7 @@ exports.deleteAdmin = (req, res)=> {
 		res.status(404).send("e");
 	})
 }
+
+exports.getAllMetrics=(req,res)=>{
+	res.status(200).send({status:200,message:req.metric})
+}

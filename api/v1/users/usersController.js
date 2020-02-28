@@ -524,6 +524,12 @@ exports.sendPersonNotification = (req, res, next)=> {
   res.status(200).send({status:200});
 
   }
+  exports.getUsersMetric = (req, res, next)=>{
+	  users.countDocuments().then((count)=>{
+		req.metric ={"userMetric":count};
+		next();
+	  })
+  }
 
 
 
