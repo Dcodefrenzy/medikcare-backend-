@@ -18,7 +18,7 @@ router.route("/users")
 	.get(auth.adminAuthenticate, controller.viewusers)
 
 router.route("/register")
-	.post(controller.adduser,personalController.addPersonalRecords,healthController.addHealthRecords, adsmetricsController.addAdsMetricsUser,mailerController.sendRegistrationMail, logs.addLogs)
+	.post(controller.adduser,personalController.addPersonalRecords,healthController.addHealthRecords, adsmetricsController.addAdsMetricsUser,mailerController.sendRegistrationMail,mailerController.adminNotification, logs.addLogs)
 
 router.route("/users/:id")
 	.get(auth.adminAuthenticate, controller.getuser)
@@ -30,7 +30,7 @@ router.route("/notify-user")
 	.post(doctorController.doctorAuthenticate, controller.notifyUser)
 
 router.route("/user-verify")
-		.patch(controller.userAuthenticate, controller.mailVerification)
+		.patch(controller.userAuthenticate,controller.chekMailVerification, mailerController.sendWelcomeMail,mailerController.onboardingCustomers, controller.mailVerification)
 
 router.route("/admin/:id")
 	.get(auth.adminAuthenticate, controller.findUser, personalController.getPersonalRecords)

@@ -55,6 +55,7 @@ exports.userAuthenticate =  (req, res, next)=>{
 			}
 			console.log("token check successful")
 			req.user = body;
+			req.isUser = true;
 			req.token = token;
 			next();
 	}).catch((e)=>{
@@ -195,6 +196,20 @@ exports.mailVerification = (req, res)=>{
 	}).catch((e)=>{
 		console.log(e)
 		res.status(403).send(e);
+	})
+}
+
+exports.chekMailVerification = (req, res, next)=>{
+	const _id = req.user._id;
+	users.findById({_id:_id}).then((user)=>{
+		if (user.verification === true) {
+			return user.generateAuthToken().then((token)=>{
+				const userData = {status:200, token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id};
+				res.status(200).send(userData);
+			})
+		}else{
+			next();
+		}
 	})
 }
 
