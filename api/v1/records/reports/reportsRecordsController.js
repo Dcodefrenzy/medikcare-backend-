@@ -56,7 +56,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
     
     console.log(req.body);
     console.log(req.doctor._id)
-    if (req.doctor._id !== req.body._doctorId) {
+    if (req.doctor._id !== req.body._doctorId._id) {
         const error = {status:401, message:"You are trying to enter a report thats not yours."}
         return res.status(401).send(error); 
     }
