@@ -54,9 +54,9 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
 
 exports.addCompleteReportRecord = (req, res, next)=>{
     
-    console.log(req.body);
+    console.log(req.body.doctorId);
     console.log(req.doctor._id)
-    if (req.doctor._id !== req.body._doctorId._id) {
+    if (req.doctor._id !== req.body.doctorId) {
         const error = {status:401, message:"You are trying to enter a report thats not yours."}
         return res.status(401).send(error); 
     }
@@ -67,7 +67,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     test:req.body.test,
                     diagnoses:req.body.diagnoses,
                     complete: true,
-                    _doctorId: req.body._doctorId,
+                    _doctorId: req.body.doctorId,
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
                     dateCreated:Date.now()
