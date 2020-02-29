@@ -53,6 +53,13 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
 }
 
 exports.addCompleteReportRecord = (req, res, next)=>{
+    
+    console.log(req.body._doctorId);
+    console.log(req.doctor._id)
+    if (req.doctor._id !== req.body._doctorId) {
+        const error = {status:401, message:"You are trying to enter a report thats not yours."}
+        return res.status(401).send(error); 
+    }
     ReportsRecords.findOne({_sessionId:req.body.chatSessionId}).then((report)=>{
         if (!report) {
             ReportsRecord = new ReportsRecords({
@@ -65,12 +72,6 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     _sessionId:req.body.chatSessionId,
                     dateCreated:Date.now()
             });
-            console.log(ReportsRecord._doctorId);
-            console.log(req.doctor._id)
-            if (req.doctor._id !== ReportsRecord._doctorId) {
-                const error = {status:401, message:ReportsRecord._doctorId,id:req.doctor._id}
-                return res.status(401).send(error); 
-            }
             ReportsRecord.save().then((record)=>{
                 if (!record) {
                      
