@@ -5,11 +5,7 @@ const {ObjectID} = require("mongodb");
 
 
 exports.addChatMetricsUser = (req, res,next)=>{
-	            
-	if (req.user._id !== req.body._userId) {
-		const error = {status:401, message:"You are trying to enter a report thats not yours."}
-		return res.status(401).send(error); 
-	}
+
 	ChatMetrics.findOne({_sessionId:req.body.chatSessionId}).then((metric)=>{
 		if (!metric) {
 			ChatMetric = new ChatMetrics({
