@@ -67,8 +67,8 @@ exports.addCompleteReportRecord = (req, res, next)=>{
             });
             console.log(ReportsRecord._doctorId);
             console.log(req.doctor._id)
-            if (req.doctor._id != ReportsRecord._doctorId) {
-                const error = {status:401, message:"You are trying to enter a report thats not yours."}
+            if (req.doctor._id !== ReportsRecord._doctorId) {
+                const error = {status:401, message:ReportsRecord._doctorId,id:req.doctor._id}
                 return res.status(401).send(error); 
             }
             ReportsRecord.save().then((record)=>{
