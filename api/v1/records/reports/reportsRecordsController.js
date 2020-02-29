@@ -15,7 +15,7 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
                     dateCreated:Date.now()
             });
             
-            if (req.user._id !== req.body._userId) {
+            if (req.user._id !== ReportsRecord._userId) {
                 const error = {status:401, message:"You are trying to enter a report thats not yours."}
                 return res.status(401).send(error); 
             }
@@ -65,9 +65,9 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     _sessionId:req.body.chatSessionId,
                     dateCreated:Date.now()
             });
-            console.log({"b id":req.body._doctorId});
+            console.log({"b id":ReportsRecord._doctorId});
             console.log({"d id":req.doctor._id})
-            if (req.doctor._id !== req.body._doctorId) {
+            if (req.doctor._id !== ReportsRecord._doctorId) {
                 const error = {status:401, message:"You are trying to enter a report thats not yours."}
                 return res.status(401).send(error); 
             }
