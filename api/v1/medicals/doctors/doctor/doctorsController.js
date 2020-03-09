@@ -76,9 +76,10 @@ exports.doctorRegister = (req, res, next) =>{
             age: req.body.age,
             verification:false,
             password: req.body.password,
-            lastLogin: new Date,
+            lastLogin: new Date(),
             loginStatus: true,
-            deleteUser: false,	
+            deleteUser: false,
+            dateCreated: new Date,	
         });
         
         doctor.save().then((doctor)=>{
@@ -120,7 +121,7 @@ exports.doctorLogin = (req, res, next) =>{
             //console.log("get user and return a token");
 
             const doctorUpdate = new doctors({
-                lastLogin: Date.now,
+                lastLogin:new Date(),
                 loginStatus: true,
             });
             doctors.findByIdAndUpdate(doctor._id, {$set: {lastLogin:doctorUpdate.lastLogin, loginStatus:doctorUpdate.loginStatus}}).then((newDoctor)=>{
@@ -216,7 +217,20 @@ exports.doctors = (req, res, next) => {
     })
 }
 
-
+exports.getAllDoctorsForMail=(req, res, next)=>{
+    doctors.find().then((doctors)=>{
+        if(!doctors) {
+            const error = {status:403, message:"No doctors registered yet"}
+            return res.status(403).send(error);
+        }else {
+            req.data.doctors = doctors;
+            next();
+        }
+    }).catch((e)=>{
+        console.log(e)
+        res.status(403).send(e);
+    })
+}
 
 exports.findDoctor = (req, res, next) => {
     const _id = req.params.id;
@@ -274,6 +288,21 @@ exports.findAdminDoctorByID = (req, res, next) => {
                 req.data = {status:200, token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id};
                next()
             })
+        }
+    }).catch((e)=>{
+       // console.log(e)
+        res.status(403).send(e);
+    })
+}
+exports.findUserDoctorByID = (req, res, next) => {
+    const _id = req.params.id;
+
+    doctors.findById({_id:_id}).then((doctor)=>{
+        if(!doctors) {
+            const error = {status:403, message:"No doctors registered yet"}
+            return res.status(403).send(error);
+        }else {
+            res.status(200).send({"status":200,"message": {email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id}})
         }
     }).catch((e)=>{
        // console.log(e)
@@ -444,7 +473,7 @@ exports.updatePersonNotification=(req, res)=>{
         include_player_ids: [playerId]
       };
         sendNotification(message);  
-        res.status(200).send({status:200});
+        res.status(200).send({status:201});
        }
    }).catch((e)=>{
        console.log(e)
@@ -452,7 +481,25 @@ exports.updatePersonNotification=(req, res)=>{
        res.status(403).send(error);
    }) 
  }
- var sendNotification = function(data) {
+
+ exports.notifyDoctors = async (req, res)=>{
+      const response= await req.data.doctors.map((doctor)=>{
+        return doctor.playerId;  
+      });
+    	
+      let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
+      const message = { 
+      app_id: appid,
+      contents: {"en": req.data.topic},
+      include_player_ids: [response]
+      }
+      
+      sendNotification(message); 
+    
+      res.status(201).send({status:201, message:"Your question has been sent to our docotrs."});
+ }
+
+  function sendNotification(data) {
 	var headers = {
 	  "Content-Type": "application/json; charset=utf-8"
 	};

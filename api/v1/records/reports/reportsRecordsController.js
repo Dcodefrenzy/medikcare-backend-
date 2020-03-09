@@ -12,7 +12,7 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
                     _doctorId: req.body._doctorId,
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
-                    dateCreated:Date.now()
+                    dateCreated:new Date(),
             });
             ReportsRecord.save().then((record)=>{
                 if (!record) {
@@ -60,7 +60,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     _doctorId: req.body._doctorId,
                     _userId: req.body._userId,
                     _sessionId:req.body.chatSessionId,
-                    dateCreated:Date.now()
+                    dateCreated:new Date(),
             });
             ReportsRecord.save().then((record)=>{
                 if (!record) {

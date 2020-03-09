@@ -50,6 +50,10 @@ answersSchema = mongoose.Schema({
         require:true,
         ref:doctors,
     },
+    deleteAnswer :{
+        type:Boolean,
+        require:true,
+    },
 })
 
 const answers = mongoose.model('answers', answersSchema);

@@ -74,7 +74,8 @@ router.route("/reports")
 router.route("/chatMetric/add")
 		.post(controller.userAuthenticate, chatmetricsController.addChatMetricsUser, doctortmetricsController.addDoctorMetricsUser, logs.addLogNext, reportController.addIncompleteReportRecord, doctorController.findDoctorByID,mailerController.sendChatMail, logs.notifyLogUser)	
 		
-
+router.route("/doctor/:id")
+	.get(controller.userAuthenticate, doctorController.findUserDoctorByID)
 		
 
 module.exports = router;

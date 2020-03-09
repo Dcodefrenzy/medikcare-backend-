@@ -75,10 +75,10 @@ exports.adduser = (req, res, next)=>{
 		age: req.body.age,
 		verification:false,
 		password: req.body.password,
-		lastLogin: new Date,
+		lastLogin: new Date(),
 		loginStatus: true,
 		deleteUser: false,
-		dateCreated: new Date,		
+		dateCreated: new Date(),		
 	});
 
 	user.save().then((user)=>{
@@ -136,6 +136,15 @@ users.findByCredentials(user.email, user.password).then((user)=>{
 		res.status(403).send(e);
 	});
 }
+
+
+exports.getUserMailsAndPlayerIDs= async (req, res, next)=>{
+		users.find({}).then((user)=>{
+			req.data.users = user;
+			next();
+		})
+}
+
 exports.notifyUser = (req, res)=>{
    const _id = req.body.to;
    const mes = req.body.message;
@@ -476,6 +485,24 @@ exports.findAdminUserByID = (req, res, next) => {
 				req.data = {status:200, token:token, email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true};
 				next();
 			})
+        }
+    }).catch((e)=>{
+		console.log(e)
+        res.status(403).send(e);
+    })
+}
+
+  
+exports.findDoctorUserByID = (req, res, next) => {
+    const _id = req.params.id;
+ 
+    users.findById({_id:_id}).then((user)=>{
+        if(!user) {
+            const error = {status:403, message:"No user registered yet"}
+            return res.status(403).send(error);
+        }else {
+			res.status(200).send({"status":200, "message":{email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true}});
+				
         }
     }).catch((e)=>{
 		console.log(e)

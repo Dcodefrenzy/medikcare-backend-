@@ -29,7 +29,7 @@ doctorsRecordsSchema = mongoose.Schema({
         require:true,
     },
     year: {
-        type:Date,
+        type:String,
         require:true,
     },
     specialty:{
@@ -51,9 +51,8 @@ doctorsRecordsSchema = mongoose.Schema({
 		}
     },
     dateCreated:{
-        type:Date,
+        type:String,
         require:true,
-        default:Date.now,
     },
     dateUpdated:{
         type:Date,

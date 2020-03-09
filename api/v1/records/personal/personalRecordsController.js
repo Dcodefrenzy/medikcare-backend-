@@ -6,7 +6,7 @@ const {ObjectID} = require("mongodb");
 
 exports.addPersonalRecords = (req, res, next)=>{
 	PersonalRecord = new PersonalRecords({
-			dateCreated: new Date,
+			dateCreated: new Date(),
 			_userId: req.data._id,
 	});
 

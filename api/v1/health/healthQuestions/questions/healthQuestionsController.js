@@ -13,14 +13,16 @@ exports.addQuestion  = (req, res, next)=> {
                 const err = {status:403, message:"Unable to add question."}
                 return res.status(403).send(err);
             }else{
-                const questionData = {status:201,_id:question._userId, message:"Your-question-has-been-pass-accross-to-our-pool-of-doctors,-you-will-recieve-a-reply-soon,-please-put-on-your-notifications."}
+                const questionData = {status:201,_idTo:question._userId,topic:question.topic,description:question.description, message:"Your-question-has-been-pass-accross-to-our-pool-of-doctors,-you-will-recieve-a-reply-soon,-please-put-on-your-notifications."}
                req.data = questionData;
-               req.data.loggerUser = "Patient";
-                req.data.logsDescription = "Added a new question.";
+               req.data.loggerUserTo = "Patient";
+                req.data.logsDescriptionTo = "Added a new question.";
                 req.data.title = "Qustion";
+                
                 next();
             }
         }).catch((e)=>{
+            console.log(e)
             res.status(403).send(e);
         })
 }

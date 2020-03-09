@@ -107,9 +107,8 @@ doctorsSchema = mongoose.Schema({
 	},
 
 	dateCreated:{
-		type: Date,
+		type: String,
         required:true,
-        default:Date.now,
 	},
 });
 
@@ -145,7 +144,7 @@ doctorsSchema.pre('findOneAndUpdate', function(next){
 doctorsSchema.methods.toJSON = function(){
 	const doctor = this;
 	const doctorObject = doctor.toObject();
-	return _.pick(doctorObject, ['_id', 'email', 'firstname', 'lastname',  'phonenumber', 'gender', 'age', 'verification','image','loginStatus','adminVerification','profileCompleted']);
+	return _.pick(doctorObject, ['_id', 'email', 'firstname', 'lastname',  'phonenumber', 'gender', 'age', 'verification','dateCreated','image','loginStatus','adminVerification','profileCompleted']);
 };
 
 		//creating an authentication token for doctors

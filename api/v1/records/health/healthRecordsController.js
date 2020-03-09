@@ -6,7 +6,7 @@ const {ObjectID} = require("mongodb");
 
 exports.addHealthRecords = (req, res, next)=>{
 	healthRecord = new HealthRecords({
-			dateCreated: new Date,
+			dateCreated:new Date(),
 			_userId: req.data._id,
 	});
 	healthRecord.save().then((record)=>{

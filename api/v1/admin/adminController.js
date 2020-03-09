@@ -129,6 +129,19 @@ exports.viewAdmins = (req, res)=> {
 			return res.status(404).send(error)
 	})
 }
+exports.viewAdminsNames = (req, res)=>{
+	admins.find({}, "firstname lastname _id").then((admins)=>{
+		if(!admins) {
+			const error = {status:404, message:"No Admin Found"}
+			return res.status(404).send(error)
+		}
+		const adminDetails = {status:200, admins:admins}
+		res.status(200).json(adminDetails);
+	}).catch((e)=>{
+			const error = {status:404, message:"No Admin Found"}
+			return res.status(404).send(error)
+	})
+}
 
 exports.adminLogin = (req, res)=> {
 		const admin = new admins({

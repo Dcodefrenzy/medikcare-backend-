@@ -37,6 +37,9 @@ router.route("/admin-verify")
 router.route("/")
 	.get( controller.masterAdminAuthenticate,  controller.viewAdmins)
 
+router.route("/blog")
+	.get( controller.adminAuthenticate,  controller.viewAdminsNames)
+
 router.route("/:id")
 	.patch(controller.masterAdminAuthenticate, controller.updateAdmin)
 

@@ -56,6 +56,7 @@ exports.addDoctorsRecords = (req, res, next)=> {
             specialty:req.body.specialty,
             folioNumber:req.body.folioNumber,
             _doctorId:req.data._id,
+           dateCreated: new Date,
     });
     doctorRecord.save().then((doctorRecord)=>{
         if(!doctorRecord){

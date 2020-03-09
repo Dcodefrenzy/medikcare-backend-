@@ -6,10 +6,11 @@ const userController = require("../../../users/usersController");
 const doctorController = require("../../../medicals/doctors/doctor/doctorsController");
 const adminController = require("../../../admin/adminController");
 const answersController = require("../answers/answersController");
+const mailController = require("../../../mail/mailController")
 
 
 router.route("/ask")
-    .post(userController.userAuthenticate, healthQuestionsController.addQuestion, logController.addLogs)
+    .post(userController.userAuthenticate, healthQuestionsController.addQuestion, logController.addLogNext,doctorController.getAllDoctorsForMail, mailController.sendDoctorsQuestionMail, doctorController.notifyDoctors)
 
     router.route("/user/questions")
         .get(userController.userAuthenticate, healthQuestionsController.getAllQuestion, answersController.GetAnswers)

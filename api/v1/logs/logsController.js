@@ -4,7 +4,7 @@ var {ObjectID} = require("mongodb");
 
 exports.addLogs = (req, res)=>{
 	//details of the loan. 
-	console.log(req.data);
+	//console.log(req.data);
 	log = new Logs({
 			title: req.data.title,
 			description: req.data.logsDescription,
@@ -20,7 +20,7 @@ exports.addLogs = (req, res)=>{
 		//console.log(data)
 		res.status(201).send(req.data);
 	}).catch((e)=>{
-		//console.log(e)
+		console.log(e)
 		//sconsole.log(e)
 		res.status(404).send(e);
 	});

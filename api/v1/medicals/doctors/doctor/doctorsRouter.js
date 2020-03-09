@@ -65,6 +65,9 @@ router.route("/report/add")
 
 router.route("/notify-doctor")
     .post(userController.userAuthenticate, doctorsController.notifyDoctor)
+    
+router.route("/user/:id")
+    .post(doctorsController.doctorAuthenticate, userController.findDoctorUserByID)
 
 
 

@@ -9,6 +9,8 @@ const doctorRecordsRouter = require("./medicals/doctors/doctorsRecords/doctorsRe
 const healthQuestionsRouter = require("./health/healthQuestions/questions/healthQuestionsRouter");
 const healthAnswersRouter = require("./health/healthQuestions/answers/answersRouter");
 const logsRouter = require("./logs/logsRouter.js");
+const blogRouter = require("./blog/blogRouter");
+const imagesRouter = require("./images/imagesRouter");
 /*const mailRouter = require("./mail/mailRouter.js");*/
 
 
@@ -21,6 +23,8 @@ api.use("/question", healthQuestionsRouter);
 api.use("/question", healthQuestionsRouter);
 api.use("/answer", healthAnswersRouter);
 api.use("/logs", logsRouter);
+api.use("/blogs", blogRouter);
+api.use("/images", imagesRouter);
 /*api.use("/mails", mailRouter);*/
 
 
