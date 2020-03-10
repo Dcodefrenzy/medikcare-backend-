@@ -12,10 +12,17 @@ router.route("/add")
     .post(adminController.adminAuthenticate, controller.saveBlog, logsController.addLogs)
 
 router.route("/")
-    .get(adminController.adminAuthenticate, controller.getAllBlogs)
+    .get(adminController.adminAuthenticate, controller.getAllBlogs, adminController.viewAdminsByIds)
+
+
+router.route("/users")
+    .post(controller.getAllBlogs, adminController.viewAdminsByIds)
+    
+router.route("/users/:id")
+        .post(controller.getBlog, adminController.viewAdminNameById)
 
 router.route("/:id")
-    .get(adminController.adminAuthenticate, controller.getBlog)
+    .get(adminController.adminAuthenticate, controller.getBlog, adminController.viewAdminNameById)
 
 router.route("/update/:id")
     .patch(adminController.adminAuthenticate, controller.updateBlog, logsController.addLogs)

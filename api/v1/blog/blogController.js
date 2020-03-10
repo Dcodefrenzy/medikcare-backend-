@@ -44,18 +44,24 @@ exports.saveBlog = (req, res, next)=>{
 	});
 }
 
-exports.getAllBlogs = (req, res)=>{
-    blogs.find().then(blog=>res.status(200).send({status:200, message:blog}))
+exports.getAllBlogs = (req, res,next)=>{
+    blogs.find({deleteArticle:false}).then((blog)=>{
+        req.blogs = {status:200, message:blog};
+        next();
+    })
 }
 
-exports.getBlog = (req, res)=>{
+
+
+exports.getBlog = (req, res, next)=>{
    const _id = req.params.id;
-    blogs.findById(_id).then(blog=>{
+    blogs.findById({_id:_id,deleteArticle:false}).then(blog=>{
         if (!blog) {
             const error = {status:403, message:"Could not find blog"}
             return res.status(403).send(error);
         }else {
-            res.status(200).send({status:200, message:blog})
+            req.blog = {status:200, message:blog};
+            next();
         }
     }).catch(e=>res.status(403).send({status:403, message:"Could not find blog"}));
 }

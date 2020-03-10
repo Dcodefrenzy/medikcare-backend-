@@ -129,6 +129,24 @@ exports.viewAdmins = (req, res)=> {
 			return res.status(404).send(error)
 	})
 }
+exports.viewAdminsByIds = async(req, res)=>{
+	const newBlog = await req.blogs.message.map(async(blog, index)=>{
+		const admin = await admins.findById({_id:blog. _createdBy});
+		//console.log(blog)
+		blog. _createdBy = admin.firstname+" "+admin.lastname;
+		 return blog;
+	});
+	const resp = await Promise.all(newBlog);
+	if(resp){
+		res.status(200).send(req.blogs);
+	}
+}
+exports.viewAdminNameById = (req, res)=>{
+	admins.findById({_id:req.blog.message._createdBy}).then((admin)=>{
+		req.blog.message._createdBy = admin.firstname+" "+admin.lastname;
+		res.status(200).send(req.blog);
+	})
+}
 exports.viewAdminsNames = (req, res)=>{
 	admins.find({}, "firstname lastname _id").then((admins)=>{
 		if(!admins) {
