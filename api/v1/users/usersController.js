@@ -5,12 +5,13 @@ const {users} = require("./usersModel.js");
 const _ = require('lodash');
 const multer = require('multer');
 const path = require('path');
+//const pathe= require('/../../../client/src/Containers/MedikCare/Assets/images');
 
 
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-	  cb(null, path.join(__dirname, "/../../../../client/public/Images"))
+	  cb(null, path.join(__dirname, "/../../../../client/src/Containers/MedikCare/Assets/images"))
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '-' +file.originalname )
