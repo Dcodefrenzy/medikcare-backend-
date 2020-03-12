@@ -5,11 +5,16 @@ const bcrypt = require("bcryptjs");
 const multer = require('multer');
 const path = require('path');
 //const h = require('../../../../client/public/Images')
-
+let imgPath;
+if ( process.env.DEV_ENV == "development") {
+	imgPath = "/../../../../client/public/Images";
+}else{
+	imgPath = "/../../../../client/build/Images"
+}
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-	  cb(null, path.join(__dirname, "/../../../../client/build/Images"))
+	  cb(null, path.join(__dirname, imgPath))
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '-' +file.originalname )

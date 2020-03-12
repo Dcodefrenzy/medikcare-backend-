@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 
 let imgPath;
-if ( DEV_ENV == "development") {
+if ( process.env.DEV_ENV == "development") {
 	imgPath = "/../../../../client/public/Files";
 }else{
 	imgPath = "/../../../../client/build/Files"
