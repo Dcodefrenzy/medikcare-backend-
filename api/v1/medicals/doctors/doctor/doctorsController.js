@@ -5,11 +5,16 @@ const {doctors} = require("./doctorsModel");
 const multer = require('multer');
 const path = require('path');
 
-
+let imgPath;
+if ( DEV_ENV == "development") {
+	imgPath = "/../../../../client/public/Images";
+}else{
+	imgPath = "/../../../../client/build/Images"
+}
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-	  cb(null, path.join(__dirname, "../../../../../../client/public/Images"))
+	  cb(null, path.join(__dirname, imgPath))
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '-' +file.originalname )

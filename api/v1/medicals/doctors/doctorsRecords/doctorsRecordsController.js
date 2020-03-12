@@ -3,11 +3,16 @@ const {ObjectID} = require('mongodb');
 const multer = require('multer');
 const path = require('path');
 
-
+let imgPath;
+if ( DEV_ENV == "development") {
+	imgPath = "/../../../../client/public/Files";
+}else{
+	imgPath = "/../../../../client/build/Files"
+}
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-	  cb(null, path.join(__dirname, "../../../../../../client/public/Files"))
+	  cb(null, path.join(__dirname, imgPath))
 	},
 	filename: function (req, file, cb) {
         const name = file.originalname.replace(/\s/g, '');
