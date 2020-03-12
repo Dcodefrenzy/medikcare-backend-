@@ -3,11 +3,13 @@ const {ObjectID} = require('mongodb');
 const multer = require('multer');
 const path = require('path');
 
+require('dotenv').config()
+
 let imgPath;
-if ( process.env.DEV_ENV == "development") {
-	imgPath = "/../../../../client/public/Files";
+if ( process.env.DEV_ENV) {
+	imgPath = "/../../../../client/public/Images";
 }else{
-	imgPath = "/../../../../client/build/Files"
+	imgPath = "/../../../../client/build/Images"
 }
 
 let storage = multer.diskStorage({

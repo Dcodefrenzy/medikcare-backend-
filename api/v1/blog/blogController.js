@@ -4,9 +4,10 @@ const _ = require('lodash');
 const bcrypt = require("bcryptjs");
 const multer = require('multer');
 const path = require('path');
+require('dotenv').config()
 
 let imgPath;
-if ( process.env.DEV_ENV == "development") {
+if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
 }else{
 	imgPath = "/../../../../client/build/Images"
