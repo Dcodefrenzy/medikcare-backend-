@@ -52,7 +52,7 @@ exports.saveBlog = (req, res, next)=>{
 
 exports.getAllBlogs = (req, res,next)=>{
     blogs.find({deleteArticle:false}).then((blog)=>{
-        req.blogs = {status:200, message:blog};
+        req.data = {status:200, message:blog};
         next();
     })
 }
@@ -66,7 +66,7 @@ exports.getBlog = (req, res, next)=>{
             const error = {status:403, message:"Could not find blog"}
             return res.status(403).send(error);
         }else {
-            req.blog = {status:200, message:blog};
+            req.data = {status:200, message:blog};
             next();
         }
     }).catch(e=>res.status(403).send({status:403, message:"Could not find blog"}));

@@ -28,7 +28,7 @@ router.route("/admin/verify/:id")
         .patch(adminAuth.masterAdminAuthenticate, doctorsController.adminVerification)
         
 router.route("/user/doctors")
-    .get(userController.userAuthenticate, doctorsController.doctors)
+    .get(userController.userAuthenticate, doctorsController.Userdoctors)
     
 router.route("/admin/doctors")
     .get(adminAuth.adminAuthenticate, doctorsController.doctors)
@@ -66,8 +66,11 @@ router.route("/report/add")
 router.route("/notify-doctor")
     .post(userController.userAuthenticate, doctorsController.notifyDoctor)
     
-router.route("/user/:id")
-    .post(doctorsController.doctorAuthenticate, userController.findDoctorUserByID)
+router.route("/find-user/:id")
+    .get(doctorsController.doctorAuthenticate, userController.findDoctorUserByID)
+    
+router.route("/admin/delete/:id")
+    .patch(adminAuth.adminAuthenticate, doctorsController.deleteDoctor, logsController.addLogs)
 
 
 

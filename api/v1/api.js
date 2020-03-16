@@ -11,6 +11,7 @@ const healthAnswersRouter = require("./health/healthQuestions/answers/answersRou
 const logsRouter = require("./logs/logsRouter.js");
 const blogRouter = require("./blog/blogRouter");
 const imagesRouter = require("./images/imagesRouter");
+const maillerRouter = require("./mailer/mailerRouter");
 /*const mailRouter = require("./mail/mailRouter.js");*/
 
 
@@ -25,6 +26,7 @@ api.use("/answer", healthAnswersRouter);
 api.use("/logs", logsRouter);
 api.use("/blogs", blogRouter);
 api.use("/images", imagesRouter);
+api.use("/mailler", maillerRouter);
 /*api.use("/mails", mailRouter);*/
 
 

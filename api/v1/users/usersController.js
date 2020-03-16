@@ -85,7 +85,7 @@ exports.adduser = (req, res, next)=>{
 		lastLogin: new Date(),
 		loginStatus: true,
 		deleteUser: false,
-		dateCreated: new Date(),		
+		dateCreated: new Date,		
 	});
 
 	user.save().then((user)=>{
@@ -502,12 +502,13 @@ exports.findAdminUserByID = (req, res, next) => {
   
 exports.findDoctorUserByID = (req, res, next) => {
     const _id = req.params.id;
- 
+ console.log({"finding user":_id })
     users.findById({_id:_id}).then((user)=>{
         if(!user) {
             const error = {status:403, message:"No user registered yet"}
             return res.status(403).send(error);
         }else {
+			console.log("found user")
 			res.status(200).send({"status":200, "message":{email:user.email, name:user.firstname +" "+ user.lastname, _id:user._id,isUser:true}});
 				
         }

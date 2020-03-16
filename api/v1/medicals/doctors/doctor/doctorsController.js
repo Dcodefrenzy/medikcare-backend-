@@ -182,6 +182,24 @@ exports.mailVerification = (req, res)=>{
 	})
 }
 
+exports.deleteDoctor = (req, res, next)=>{
+    const id = req.params.id;
+    console.log(id)
+	doctors.findByIdAndUpdate(id, {$set: {deletedBy:req.admin._id, deleteUser:req.body.deleteUser}}, {new: true}).then((doctor)=>{
+			const doctorData = {status:201, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname,_id:req.admin._id, _doctorId:doctor._id};
+            req.data = doctorData;
+            req.data.loggerUser = "Admin";
+            req.data.logsDescription = "Doctor "+ doctorData.name+" was deleted by "+req.admin.firstname+" "+req.admin.lastname;
+            req.data.title = "Delete";
+ 
+            next();
+
+	}).catch((e)=>{
+		console.log(e)
+		res.status(403).send(e);
+	})
+}
+
 exports.updateDoctor= (req, res, next)=>{
 	const id = req.doctor.id;
 	const doctor = new doctors({
@@ -223,8 +241,23 @@ exports.doctors = (req, res, next) => {
     })
 }
 
+exports.Userdoctors = (req, res, next) => {
+    doctors.find({deleteUser:false}).then((doctors)=>{
+        if(!doctors) {
+            const error = {status:403, message:"No doctors registered yet"}
+            return res.status(403).send(error);
+        }else {
+            const allDoctors = {status:200, message:doctors}
+            res.status(200).send(allDoctors);
+
+        }
+    }).catch((e)=>{
+        res.status(403).send(e);
+    })
+}
+
 exports.getAllDoctorsForMail=(req, res, next)=>{
-    doctors.find().then((doctors)=>{
+    doctors.find({deleteUser:false}).then((doctors)=>{
         if(!doctors) {
             const error = {status:403, message:"No doctors registered yet"}
             return res.status(403).send(error);

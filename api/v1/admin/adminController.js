@@ -136,21 +136,21 @@ exports.viewAdmins = (req, res)=> {
 	})
 }
 exports.viewAdminsByIds = async(req, res)=>{
-	const newBlog = await req.blogs.message.map(async(blog, index)=>{
-		const admin = await admins.findById({_id:blog. _createdBy});
+	const newData = await req.data.message.map(async(data, index)=>{
+		const admin = await admins.findById({_id:data. _createdBy});
 		//console.log(blog)
-		blog. _createdBy = admin.firstname+" "+admin.lastname;
-		 return blog;
+		data. _createdBy = admin.firstname+" "+admin.lastname;
+		 return data;
 	});
-	const resp = await Promise.all(newBlog);
+	const resp = await Promise.all(newData);
 	if(resp){
-		res.status(200).send(req.blogs);
+		res.status(200).send(req.data);
 	}
 }
 exports.viewAdminNameById = (req, res)=>{
-	admins.findById({_id:req.blog.message._createdBy}).then((admin)=>{
-		req.blog.message._createdBy = admin.firstname+" "+admin.lastname;
-		res.status(200).send(req.blog);
+	admins.findById({_id:req.data.message._createdBy}).then((admin)=>{
+		req.data.message._createdBy = admin.firstname+" "+admin.lastname;
+		res.status(200).send(req.data);
 	})
 }
 exports.viewAdminsNames = (req, res)=>{
