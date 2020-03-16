@@ -12,13 +12,13 @@ let options = {
 
 exports.mailArrayOfUsers = async (req,res)=>{
 	const mailler = await req.data.users.map((user)=>{
-		const url = `https://medikcare.com/user/blog/${req.data._id}/${user._id}`
+		const url = `https://medikcare.com/user/blog/${req.data._id}`
 		let email = {
 			to: user.email,
 			from: `"Kolade from Medikcare" kolade@medikcare.com`,
 			subject: 'MedikByte',
 			text: '',
-			html: `<div style="width=100%; border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><p>On medikByte this week we will be talking about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.article} </div> <p>To read more please click on this link </p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><p>On medikByte this week we will be talking about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.article} </div> <p>To read more please click on this link </p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
 				console.log('Message sent: ' + info);
@@ -30,6 +30,47 @@ exports.mailArrayOfUsers = async (req,res)=>{
 	res.status(200).send({status:200});
 	}
 }
+exports.mailArrayOfUsersMailler = async (req,res, next)=>{
+	const mailler = await req.data.users.map(async(user)=>{
+		let email = {
+			to: user.email,
+			from: `"${req.admin.firstname} from medikcare" ${req.admin.email}`,
+			subject: req.data.message.topic,
+			text: '',
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><div style="margin-bottom:50px">${req.data.message.message} </div> <p style="margin-bottom:10px">Best Regards,<p><p>${req.admin.firstname+" "+req.admin.lastname}</p></div>`
+			 };
+			 return client.sendMail(email, function(err, info){
+				console.log('Message sent: ' + info);
+				return  "Message sent";
+			});
+	})
+	const mail = await Promise.all(mailler);
+	if(mail){
+		
+		next();
+	}
+}
+
+exports.mailExternalMailler = async (req,res, next)=>{
+
+		let email = {
+			to: req.body.externalUsers,
+			from: `"${req.admin.firstname} from medikcare" ${req.admin.email}`,
+			subject: req.data.message.topic,
+			text: '',
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Friend,</h1><div style="margin-bottom:50px">${req.data.message.message}  <a style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;" href="https://medikcare.com">MedikcareWebsite</a></div> <p style="margin-bottom:10px">Best Regards,<p><p>${req.admin.firstname+" "+req.admin.lastname}</p></div>`
+			 };
+			  client.sendMail(email, function(err, info){
+				if (err ){
+					console.log(err);
+				  }
+				  else {
+					console.log('Message sent: ' + info);
+				  }
+				  next()
+			});
+	
+}
 exports.sendDoctorsQuestionMail = async(req, res, next)=>{
 	const mailler = await req.data.doctors.map((doctor)=>{
 		const url = `https://medikcare.com/health/questions/answers/${req.data._id}`
@@ -38,7 +79,7 @@ exports.sendDoctorsQuestionMail = async(req, res, next)=>{
 			from: `"Medikcare" support@medikcare.com`,
 			subject: 'Patient Question',
 			text: '',
-			html: `<div style="width=100%; border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Dr. ${doctor.firstname+" "+doctor.lastname},</h1><p>A patient just asked a question about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.description} </div> <p> please click on this link  to respond.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Dr. ${doctor.firstname+" "+doctor.lastname},</h1><p>A patient just asked a question about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.description} </div> <p> please click on this link  to respond.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
 				console.log('Message sent: ' + info);

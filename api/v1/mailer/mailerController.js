@@ -41,7 +41,7 @@ exports.getMailler = (req, res, next)=>{
     const _id = req.params.id;
      maillers.findById({_id:_id,deleteMessage:false}).then(mailler=>{
          if (!mailler) {
-             const error = {status:403, message:"Could not find blog"}
+             const error = {status:403, message:"Could not find mail"}
              return res.status(403).send(error);
          }else {
              req.data = {status:200, message:mailler};
@@ -92,4 +92,28 @@ exports.deleteMailler=(req, res, next)=>{
     next();
     }
     }).catch(e=>res.status(403).send({status:403, message:"Could not find mail to delete"}));
+}
+
+
+exports.updateMaillerSent=(req, res, next)=>{
+    const _id = req.params.id
+    maillers.findByIdAndUpdate(_id, {$set: {mailerSent:true}, $inc: { maillerNumber: 1 }}, {new: true})
+        .then((mailler)=>{
+            if (!mailler) {
+                const error = {status:403, message:"Could not find mail"}
+                return res.status(403).send(error);
+            }else {
+                
+        const maillerItem = {status:201,topic:mailler.topic, message:mailler.message, _id:req.admin._id, maillerId:mailler._id,}
+        req.data = maillerItem;
+		req.data.loggerUser = "Admin";
+		req.data.logsDescription = `Admin ${req.admin.firstname+" "+req.admin.lastname} Sent Mail message ${mailler.topic}`;
+        req.data.title = "Mailer";
+        
+        next();
+        }
+        }).catch((e)=>{
+            console.log(e)
+            res.status(403).send({status:403, message:"Unable to update mail."})
+        });
 }

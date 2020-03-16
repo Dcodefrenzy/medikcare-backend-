@@ -25,7 +25,11 @@ router.route("/update/:id")
 router.route("/delete/:id")
     .patch(adminController.adminAuthenticate, controller.deleteMailler, logsController.addLogs)
 
-//router.route("/notify-users/:id")
-   // .post(adminController.adminAuthenticate, controller.getBlogForUsers, userController.getUserMailsAndPlayerIDs, mailController.mailArrayOfUsers)
+router.route("/notify-users/:id")
+    .post(adminController.adminAuthenticate, controller.getMailler, userController.getUserMailsAndPlayerIDs, mailController.mailArrayOfUsersMailler, controller.updateMaillerSent, logsController.addLogs)
+
+router.route("/notify-external-users/:id")
+    .post(adminController.adminAuthenticate, controller.getMailler, mailController.mailExternalMailler, controller.updateMaillerSent, logsController.addLogs)
+
 
     module.exports = router;
