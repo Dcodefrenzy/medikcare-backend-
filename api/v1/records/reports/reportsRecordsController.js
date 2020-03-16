@@ -124,7 +124,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
 
 }
 
- exports.getUserReports = (req,res)=>{
+ exports.getUserReports = (req,res,next)=>{
     const _userId = req.user._id;
  
     ReportsRecords.find({_userId:_userId,complete:true}, null, {sort: {_id: -1}}).then((reports)=>{
@@ -134,7 +134,27 @@ exports.addCompleteReportRecord = (req, res, next)=>{
             
             res.status(404).send({status:404,message:"No reports yet"})
         }else{
-            res.status(200).send({status:200,message:reports});
+            req.data =  {status:200,message:reports};
+            next();
+        }
+    }).catch((e)=>{
+        console.log(e)
+        res.status(404).send({status:404,message:"No reports"})
+    })
+}
+
+exports.getUserReport = (req, res, next)=>{
+    const _userId = req.user._id;
+    const _id = req.params.id;
+
+    ReportsRecords.findOne({_userId:_userId, _id:_id}).then((report)=>{
+        if (!report) {
+            res.status(404).send({status:404,message:"No report"})
+        }else{
+            
+            req.data =  {status:200,message:report};
+          
+            next();
         }
     }).catch((e)=>{
         console.log(e)

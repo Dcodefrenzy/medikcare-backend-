@@ -69,13 +69,17 @@ router.route("/update/notification/:playerId")
 		.patch(controller.userAuthenticate, controller.updatePersonNotification)
 		
 router.route("/reports")
-	.get(controller.userAuthenticate, reportController.getUserReports)
+	.get(controller.userAuthenticate, reportController.getUserReports, doctorController.viewDoctorByIds)
 
 router.route("/chatMetric/add")
 		.post(controller.userAuthenticate, chatmetricsController.addChatMetricsUser, doctortmetricsController.addDoctorMetricsUser, logs.addLogNext, reportController.addIncompleteReportRecord, doctorController.findDoctorByID,mailerController.sendChatMail, logs.notifyLogUser)	
 		
 router.route("/find-doctor/:id")
 	.get(controller.userAuthenticate, doctorController.findUserDoctorByID)
+
+		
+router.route("/report/:id")
+	.get(controller.userAuthenticate, reportController.getUserReport, doctorController.viewDoctorNameById)
 		
 
 module.exports = router;

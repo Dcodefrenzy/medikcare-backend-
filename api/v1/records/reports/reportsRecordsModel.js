@@ -14,10 +14,6 @@ ReportsRecordsSchema = mongoose.Schema({
 			type: String,
 			required: false,
         },
-		dateCreated:{
-			type: String,
-            required: true,
-        },
         complete:{
             type:Boolean,
             required:true,
@@ -35,6 +31,10 @@ ReportsRecordsSchema = mongoose.Schema({
         _sessionId:{
             type: mongoose.Schema.Types.ObjectId,
             require:true,
+        },
+        dateCreated:{
+            type: String,
+            required:true,
         },
 });
 

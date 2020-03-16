@@ -459,6 +459,28 @@ exports.newPasswordChange =(req, res, next) =>{
 	})
 }
 
+exports.viewDoctorByIds = async(req, res)=>{
+	const newData = await req.data.message.map(async(data, index)=>{
+		const doctor = await doctors.findById({_id:data. _doctorId});
+		
+         data._doctorId = doctor.firstname +" "+ doctor.lastname;
+         return  data;
+
+	});
+	const resp = await Promise.all(newData);
+	if(resp){
+		res.status(200).send(req.data);
+	}
+}
+exports.viewDoctorNameById = (req, res)=>{
+	doctors.findById({_id:req.data.message._doctorId}).then((doctor)=>{
+        if (doctor) {
+		req.data.doctor = doctor.firstname+" "+doctor.lastname;
+		res.status(200).send(req.data);
+        }
+	})
+}
+
 exports.logout =(req, res, next)=>{
 	const id = req.doctor._id;
 	const doctorUpdate = new doctors({
