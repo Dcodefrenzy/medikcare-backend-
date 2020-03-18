@@ -259,7 +259,7 @@ exports.adminNotification = (req, res, next) =>{
 }
 
 exports.userNotification = (req, res, next) =>{ 
-	const url = `https://medikcare.com/health/questions/answers/${req.data._id}`
+	const url = `https://medikcare.com/health/questions/answers/${req.params.ansId}`
 	  const answer = req.body.answer.slice(0, 200)
 	  let email = {
 		to:req.data.email ,

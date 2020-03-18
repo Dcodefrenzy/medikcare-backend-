@@ -482,7 +482,7 @@ exports.findUserByID = (req, res, next) => {
   
 exports.findAdminUserByID = (req, res, next) => {
     const _id = req.params.id;
- 
+
     users.findById({_id:_id}).then((user)=>{
         if(!user) {
             const error = {status:403, message:"No user registered yet"}
