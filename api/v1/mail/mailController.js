@@ -289,7 +289,7 @@ exports.sendChatMail = (req, res, next) =>{
 		const topic = req.data.topic; 
 		const message = req.data.logsDescription;
 		let email = {
-			to: usermail,
+			to: usermail+","+"medikcare1@gmail.com",
 			from: `"medikcare" support@medikcare.com`,
 			subject: 'Medikcare Notification',
 			text: '',

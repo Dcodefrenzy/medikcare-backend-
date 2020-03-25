@@ -282,7 +282,7 @@ exports.findDoctor = (req, res, next) => {
             const doctorData = {status:200, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id,}
             req.data = doctorData;
             req.data.loggerUser = "Doctor";
-            req.data.logsDescription = "A patience have created a new session with you, get ready to save a life.";
+            req.data.logsDescription = "A patient have created a new session with you, please treat as urgent.";
             req.data.title = "Chat";
             req.data.topic = "New chat session"
             req.data.link = "medikcare.com/chat/patience/"+doctor._id;
