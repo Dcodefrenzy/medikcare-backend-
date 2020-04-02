@@ -53,6 +53,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
     ReportsRecords.findOne({_sessionId:req.body.chatSessionId}).then((report)=>{
         if (!report) {
             ReportsRecord = new ReportsRecords({
+                    complains:req.body.complains,
                     medication:req.body.medication,
                     test:req.body.test,
                     diagnoses:req.body.diagnoses,
@@ -91,8 +92,9 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                 test:req.body.test,
                 diagnoses:req.body.diagnoses,
                 complete: true,
+                complains:req.body.complains,
         });
-        ReportsRecords.findByIdAndUpdate({_id:report._id}, {$set: {medication:rec.medication, test:rec.test, diagnoses:rec.diagnoses,complete:true}}, {new: true}).then((record)=>{
+        ReportsRecords.findByIdAndUpdate({_id:report._id}, {$set: {complains:rec.complains,medication:rec.medication, test:rec.test, diagnoses:rec.diagnoses,complete:true}}, {new: true}).then((record)=>{
                 if (!record) {
 			        const error = {status:404, message:"Unable to add report."}
 			        return res.status(404).send(error); 

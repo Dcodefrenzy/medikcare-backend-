@@ -184,7 +184,7 @@ exports.mailVerification = (req, res)=>{
 
 exports.deleteDoctor = (req, res, next)=>{
     const id = req.params.id;
-    console.log(id)
+   // console.log(id)
 	doctors.findByIdAndUpdate(id, {$set: {deletedBy:req.admin._id, deleteUser:req.body.deleteUser}}, {new: true}).then((doctor)=>{
 			const doctorData = {status:201, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname,_id:req.admin._id, _doctorId:doctor._id};
             req.data = doctorData;
@@ -285,7 +285,7 @@ exports.findDoctor = (req, res, next) => {
             req.data.logsDescription = "A patient have created a new session with you, please treat as urgent.";
             req.data.title = "Chat";
             req.data.topic = "New chat session"
-            req.data.link = "medikcare.com/chat/patience/"+doctor._id;
+            req.data.link = "medikcare.com/chat/doctors/doctor";
             req.data.loggerUserTo = "USer";
             req.data.logsDescriptionTo = "You have started a medical consultation.";
             req.data._idTo = req.user._id;
@@ -299,7 +299,7 @@ exports.findDoctor = (req, res, next) => {
 
 exports.findDoctorByID = (req, res, next) => {
     const _id = req.body._doctorId;
-    console.log(_id);
+    
     doctors.findById(_id).then((doctor)=>{
         if(!doctors) {
             const error = {status:403, message:"No doctors registered yet"}

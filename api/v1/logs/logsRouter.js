@@ -21,6 +21,9 @@ router.route("/user")
 
 router.route("/user/:id")
 	.get(userController.userAuthenticate,   controller.getUserChatLogs)
+	
+router.route("/doctor/:id")
+	.get(doctorController.doctorAuthenticate,   controller.getUserChatLogs)
 
 	router.route("/unread/user")
 	.get(userController.userAuthenticate,   controller.getUserUnreadLogs)

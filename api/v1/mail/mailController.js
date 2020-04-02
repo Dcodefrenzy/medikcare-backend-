@@ -73,7 +73,7 @@ exports.mailExternalMailler = async (req,res, next)=>{
 }
 exports.sendDoctorsQuestionMail = async(req, res, next)=>{
 	const mailler = await req.data.doctors.map((doctor)=>{
-		const url = `https://medikcare.com/health/questions/answers/${req.data._id}`
+		const url = `https://medikcare.com/doctor/health/questions/answers/${req.data.questionId}`
 		let email = {
 			to: doctor.email,
 			from: `"Medikcare" support@medikcare.com`,

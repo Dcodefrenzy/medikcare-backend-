@@ -13,7 +13,7 @@ exports.addQuestion  = (req, res, next)=> {
                 const err = {status:403, message:"Unable to add question."}
                 return res.status(403).send(err);
             }else{
-                const questionData = {status:201,_idTo:question._userId,topic:question.topic,description:question.description, message:"Your-question-has-been-pass-accross-to-our-pool-of-doctors,-you-will-recieve-a-reply-soon,-please-put-on-your-notifications."}
+                const questionData = {status:201,questionId:question._id,_idTo:question._userId,topic:question.topic,description:question.description, message:"Your-question-has-been-pass-accross-to-our-pool-of-doctors,-you-will-recieve-a-reply-soon,-please-put-on-your-notifications."}
                req.data = questionData;
                req.data.loggerUserTo = "Patient";
                 req.data.logsDescriptionTo = "Added a new question.";
@@ -28,7 +28,7 @@ exports.addQuestion  = (req, res, next)=> {
 }
 
 exports.getAllQuestion = (req, res, next) => {
-    healthQuestions.find().then((questions)=>{
+    healthQuestions.find({},null, {sort: {_id: -1}}).then((questions)=>{
         if(!questions) {
             const err = {status:403, message:"We couldnt find any questions at this time"}
             return res.status(403).send(err);

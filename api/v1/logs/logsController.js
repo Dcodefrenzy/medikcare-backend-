@@ -78,7 +78,13 @@ exports.adminLogs =(req, res)=>{
 }
 
 exports.getUserLogs = (req, res)=>{
-	const _loggerId = req.user.id;
+	let _loggerId;
+	if (req.doctor) {
+		_loggerId = req.doctor._id;
+	}else{
+		_loggerId = req.user._id;
+	}
+
 	Logs.find({_loggerId:_loggerId}, null, {sort: {_id: -1}}).then((logs)=>{
 		if (!logs) {
 			return res.status(404).send("No logs for this user found");
@@ -91,8 +97,13 @@ exports.getUserLogs = (req, res)=>{
 }
 exports.getUserChatLogs = (req, res)=>{
 	const chat = req.params.id;
-	console.log(chat)
-	const _loggerId = req.user._id;
+	//console.log(chat)	let _loggerId;
+	if (req.doctor) {
+		_loggerId = req.doctor._id;
+	}else{
+		_loggerId = req.user._id;
+	}
+
 	Logs.find({_loggerId:_loggerId,title:chat}, null, {sort: {_id: -1}}).then((logs)=>{
 		if (!logs) {
 			return res.status(404).send("No logs for this user found");

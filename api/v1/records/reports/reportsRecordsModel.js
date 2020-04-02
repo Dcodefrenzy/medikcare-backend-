@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const {users} = require("../../users/usersModel");
 
 ReportsRecordsSchema = mongoose.Schema({
+        complains:{
+            type:String,
+            required:false,
+        },
 		medication: {
 			type: String,
 			required: false,
