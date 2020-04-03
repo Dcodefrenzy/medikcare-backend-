@@ -56,11 +56,11 @@ let storage = multer.diskStorage({
 exports.addDoctorsRecords = (req, res, next)=> {
         console.log("Recieved New data for doctor records...")
         const doctorRecord = new doctorsRecords({
-            address:req.body.address,
-            medicalSchool:req.body.medicalSchool,
-            degree:req.body.degree,
-            year:req.body.year,
-            specialty:req.body.specialty,
+            address:"N/A",
+            medicalSchool:"N/A",
+            degree:"N/A",
+            year:"N/A",
+            specialty:"N/A",
             folioNumber:req.body.folioNumber,
             _doctorId:req.data._id,
            dateCreated: new Date,

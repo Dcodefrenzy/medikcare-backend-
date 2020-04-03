@@ -13,7 +13,7 @@ const userReportController = require("./../../../records/reports/reportsRecordsC
 
 
 router.route("/register")
-    .post(doctorsController.doctorRegister, doctorsRecordsController.addDoctorsRecords,metricsController.addAdsMetricsUser, mailerController.sendRegistrationMail, logsController.addLogs);
+    .post(doctorsController.doctorRegister, doctorsRecordsController.addDoctorsRecords, mailerController.sendRegistrationMail, logsController.addLogs);
 
 router.route("/login")
     .post(doctorsController.doctorLogin);

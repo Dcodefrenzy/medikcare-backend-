@@ -72,14 +72,14 @@ exports.doctorAuthenticate =  (req, res, next)=>{
 }
 
 exports.doctorRegister = (req, res, next) =>{
-    console.log(req.body);
+    
         const doctor = new doctors({
             email: req.body.email,
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             phonenumber: req.body.phonenumber,
             gender: req.body.gender,
-            age: req.body.age,
+            age: "N/A",
             verification:false,
             password: req.body.password,
             lastLogin: new Date(),
@@ -102,12 +102,11 @@ exports.doctorRegister = (req, res, next) =>{
                 req.data.loggerUser = "Doctor";
                 req.data.logsDescription = "Doctor "+ doctorData.name+" Registration Was Successful";
                 req.data.title = "Register";
-                req.data.socialMedia = req.body.socialMedia;
                 console.log("Added dotors data and created a token");
                 next();
             })
         }).catch((e)=>{
-            
+            console.log(e)
             let err ={}
             if(e.errors) {err = {status:403, message:e.errors}}
             else if(e){err = {status:403, message:e}}

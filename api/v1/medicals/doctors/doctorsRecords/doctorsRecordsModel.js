@@ -18,19 +18,19 @@ doctorsRecordsSchema = mongoose.Schema({
     },
     address: {
         type: String,
-        required: true,
+        required: false,
     },
     medicalSchool: {
         type:String,
-        require:true,
+        require:false,
     },
     degree: {
         type:String,
-        require:true,
+        require:false,
     },
     year: {
         type:String,
-        require:true,
+        require:false,
     },
     specialty:{
         type:String,
