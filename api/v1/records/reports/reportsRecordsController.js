@@ -145,11 +145,25 @@ exports.addCompleteReportRecord = (req, res, next)=>{
     })
 }
 
+exports.getUserReportsForDoctors = (req,res,next)=>{
+    const _userId = req.params.id;
+ 
+    ReportsRecords.find({_userId:_userId,complete:true}, null, {sort: {_id: -1}}).then((reports)=>{
+
+            req.data.reports = reports;
+            next();
+
+    }).catch((e)=>{
+        console.log(e)
+        res.status(404).send({status:404,message:"No reports"})
+    })
+}
+
 exports.getUserReport = (req, res, next)=>{
-    const _userId = req.user._id;
+
     const _id = req.params.id;
 
-    ReportsRecords.findOne({_userId:_userId, _id:_id}).then((report)=>{
+    ReportsRecords.findOne({ _id:_id}).then((report)=>{
         if (!report) {
             res.status(404).send({status:404,message:"No report"})
         }else{

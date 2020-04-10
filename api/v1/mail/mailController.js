@@ -90,6 +90,26 @@ exports.sendDoctorsQuestionMail = async(req, res, next)=>{
 		next();
 		}
 }
+exports.sendDoctorsChatSession = async(req, res, next)=>{
+	const mailler = await req.data.doctors.map((doctor)=>{
+		const url = `https://medikcare.com/chat/doctors/doctor/`
+		let email = {
+			to: doctor.email,
+			from: `"Medikcare" support@medikcare.com`,
+			subject: 'Patient Consultation',
+			text: '',
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Dr. ${doctor.firstname+" "+doctor.lastname},</h1><p>A patient just created a session and made a complain</p><p><b>Patient Complain: </b>${req.data.complain}</p> <div style="margin-bottom:50px">${req.data.description} </div> <p> please click on this link  to respond.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
+			 };
+			 return client.sendMail(email, function(err, info){
+				console.log('Message sent: ' + info);
+				return "Message sent";
+			});
+	})
+	if(mailler){
+		next();
+		}
+}
+
 exports.mailUsers = (req, res)=>{
 	console.log(req.data)
 	const usersName = req.data.name;

@@ -579,6 +579,24 @@ exports.sendPersonNotification = (req, res, next)=> {
   res.status(200).send({status:200});
 
   }
+  exports.sendChatNotification = (req, res, next)=>{
+	playerId = req.data.playerId
+	const msg = req.data.logsDescription
+	let appid = "49bc3735-1264-4e8a-a146-f4291107deba"
+	const message = { 
+	app_id: appid,
+	contents: {"en": msg},
+	include_player_ids: [playerId]
+  };
+  
+const result = sendNotification(message);
+if (result) {
+		next();
+}
+else{
+	next();
+}
+  }
   exports.getUsersMetric = (req, res, next)=>{
 	  users.countDocuments().then((count)=>{
 		req.metric ={"userMetric":count};
@@ -586,6 +604,40 @@ exports.sendPersonNotification = (req, res, next)=> {
 	  })
   }
 
+  exports.viewUsersByIds = async(req, res)=>{
+		const newData = await req.data.message.map(async(data, index)=>{
+		const user = await users.findById({_id:data.userId});
+		
+		data.userId =  await user.firstname+" "+user.lastname;
+			
+		 return data
+		 
+	});
+	const resp = await Promise.all(newData);
+	if(resp){
+		res.status(200).send(req.data);
+	}
+}
 
+exports.viewUserNameById = (req, res, next)=>{
+	users.findById({_id:req.params.id}).then((user)=>{
+		req.data = {status:200, user:user};
+		next();
+	}).catch((e)=>{
+		console.log(e)
+		const error = {status:500, message:"No user Found."}
+		res.status(500).send(error);
+	}) 
+}
+exports.fetchUserById = (req, res, next)=>{
+	users.findById({_id:req.params.id}).then((user)=>{
+		req.data = {email:user.email, name:user.firstname+" "+user.lastname, playerId:user.playerId};
+		next();
+	}).catch((e)=>{
+		console.log(e)
+		const error = {status:500, message:"No user Found."}
+		res.status(500).send(error);
+	}) 
+}
 
 

@@ -4,20 +4,18 @@ const {chatSessions} = require("../chatSessions/chatSessionsModel");
 
 
 const chatSchema = mongoose.Schema({
-        sender:{
-            type:mongoose.Schema.Types.ObjectId,
-            require:true,
+        sessionStart:{
+            type:Boolean
         },
-        receiver:{
-            type:mongoose.Schema.Types.ObjectId,
-            require:true,
+        sessionEnd:{
+            type:Boolean,
         },
-        message:{
+        complain:{
             type:String,
             require:true,
         },
-        delivery:{
-            type:Boolean,
+        emergencyLevel:{
+            type:Number,
             require:true,
             default:false,
         },
@@ -25,7 +23,7 @@ const chatSchema = mongoose.Schema({
             type:Date,
             default:Date.now,
         },
-        sessionId:{
+        userId:{
             type:mongoose.Schema.Types.ObjectId,
             require:true,
             //ref:chatSessions,

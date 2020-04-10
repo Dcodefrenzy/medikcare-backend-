@@ -9,6 +9,7 @@ const adminAuth = require("../../../admin/adminController");
 const mailerController = require("../../../mail/mailController");
 const chatmetricsController = require("../../../metrics/chat/chatMetricController");
 const userReportController = require("./../../../records/reports/reportsRecordsController");
+const chatSessionController = require("../../../health/healthConsultations/chat/chatController")
 
 
 
@@ -43,7 +44,7 @@ router.route("/profile/update")
 	.patch(doctorsController.doctorAuthenticate, doctorsController.updateDoctor, logsController.addLogs)
    
 router.route("/chat/session/:id")
-        .get(userController.userAuthenticate, doctorsController.findDoctor,mailerController.sendChatMail,logsController.addLogNext, logsController.addLogs)
+        .patch(doctorsController.doctorAuthenticate, userController.fetchUserById, chatSessionController.updateStartSession, mailerController.sendChatMail, logsController.addLogNext, userController.sendChatNotification, logsController.addLogs)
 
 router.route("/password/change")
         .patch(doctorsController.doctorAuthenticate, doctorsController.passwordChange, logsController.addLogs)

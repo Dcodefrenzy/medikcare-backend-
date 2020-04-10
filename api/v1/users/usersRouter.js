@@ -11,6 +11,7 @@ const doctortmetricsController = require("../metrics/doctorsMetric/doctorsMetric
 const chatmetricsController = require("../metrics/chat/chatMetricController");
 
 const reportController = require("../records/reports/reportsRecordsController");
+const chatController = require("../health/healthConsultations/chat/chatController");
 const router = express.Router();
 
 
@@ -75,11 +76,17 @@ router.route("/chatMetric/add")
 		.post(controller.userAuthenticate, chatmetricsController.addChatMetricsUser, doctortmetricsController.addDoctorMetricsUser, logs.addLogNext, reportController.addIncompleteReportRecord, doctorController.findDoctorByID,mailerController.sendChatMail, logs.notifyLogUser)	
 		
 router.route("/find-doctor/:id")
-	.get(controller.userAuthenticate, doctorController.findUserDoctorByID)
+	.get(controller.userAuthenticate, doctorController.findUserDoctorByID)		
+	
+router.route("/doctor/:id")
+		.get(doctorController.doctorAuthenticate, controller.viewUserNameById, reportController.getUserReportsForDoctors, chatController.getUserSessionForDoctors)
 
 		
 router.route("/report/:id")
 	.get(controller.userAuthenticate, reportController.getUserReport, doctorController.viewDoctorNameById)
+	
+router.route("/doctor/report/:id")
+		.get(doctorController.doctorAuthenticate, reportController.getUserReport, doctorController.viewDoctorNameById)
 		
 
 module.exports = router;

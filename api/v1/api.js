@@ -12,6 +12,7 @@ const logsRouter = require("./logs/logsRouter.js");
 const blogRouter = require("./blog/blogRouter");
 const imagesRouter = require("./images/imagesRouter");
 const maillerRouter = require("./mailer/mailerRouter");
+const chatRouter = require("./health/healthConsultations/chat/chatRoute")
 /*const mailRouter = require("./mail/mailRouter.js");*/
 
 
@@ -27,7 +28,7 @@ api.use("/logs", logsRouter);
 api.use("/blogs", blogRouter);
 api.use("/images", imagesRouter);
 api.use("/mailler", maillerRouter);
-/*api.use("/mails", mailRouter);*/
+api.use("/chatSession", chatRouter);
 
 
 module.exports = api;
