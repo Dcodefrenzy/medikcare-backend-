@@ -31,7 +31,7 @@ exports.createSession = (req, res, next)=>{
 
 exports.updateStartSession =(req, res,next)=>{
     const _id = req.params.id;
-    chats.findByIdAndUpdate(_id, {$set: {sessionStart:true}}, {new: true}).then((chat)=>{
+    chats.findByIdAndUpdate(_id, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
         req.data.status = 201;
         req.data._id = _id;
         req.data.loggerUser = "User";
@@ -53,6 +53,7 @@ exports.updateStartSession =(req, res,next)=>{
  
 }
 exports.updateEndSession =(req, res,next)=>{
+    console.log(req.body.chatSessionId)
     const _id = req.body.chatSessionId;
     chats.findByIdAndUpdate(_id, {$set: {sessionEnd:true}}, {new: true}).then((chat)=>{
         
@@ -68,8 +69,9 @@ exports.updateEndSession =(req, res,next)=>{
  
 }
 
-exports.getSession = (req, res, next) =>{
+exports.getSessions = (req, res, next) =>{
     chats.find({sessionStart:false, sessionEnd:false}, null, {sort: {_id: -1}}).then((chats)=>{
+        console.log(chats);
             if (chats) {
                 req.data = {status:200, message:chats};
                 next();

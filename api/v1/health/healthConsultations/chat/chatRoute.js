@@ -15,7 +15,7 @@ router.route("/create")
 
 
 router.route("/")
-    .get(doctorController.doctorAuthenticate, controller.getSession, userController.viewUsersByIds)
+    .get(doctorController.doctorAuthenticate, controller.getSessions, userController.viewUsersByIds)
  
 router.route("/user/:id")
     .get(userController.userAuthenticate, controller.getUserSession)
