@@ -31,7 +31,7 @@ exports.createSession = (req, res, next)=>{
 
 exports.updateStartSession =(req, res,next)=>{
     const _id = req.params.id;
-    chats.findByIdAndUpdate(_id, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
+    chats.findByIdAndUpdate({userId:_id, sessionStart:false}, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
         req.data.status = 201;
         req.data._id = _id;
         req.data.loggerUser = "User";
