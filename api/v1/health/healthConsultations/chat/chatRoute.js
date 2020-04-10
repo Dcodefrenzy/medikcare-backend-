@@ -21,7 +21,7 @@ router.route("/user/:id")
     .get(userController.userAuthenticate, controller.getUserSession)
 
 router.route("/admin")
-    .get(adminController.adminAuthenticate, controller.getSession)
+    .get(adminController.adminAuthenticate, controller.getSessions)
 
 router.route("/start/:id")
     .patch(doctorController.doctorAuthenticate, controller.updateStartSession)
