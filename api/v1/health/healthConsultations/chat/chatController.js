@@ -53,10 +53,9 @@ exports.updateStartSession =(req, res,next)=>{
  
 }
 exports.updateEndSession =(req, res,next)=>{
-    console.log(req.body.chatSessionId)
     const _id = req.body.chatSessionId;
     chats.findByIdAndUpdate(_id, {$set: {sessionEnd:true}}, {new: true}).then((chat)=>{
-        
+        //console.log(chat)
         next();
 
     }).catch((e)=>{
@@ -103,7 +102,7 @@ exports.getUserSession = (req, res, next) =>{
 
 exports.getUserSessionForDoctors = (req, res, next) =>{
     const userId = req.params.id;
-    chats.findOne({userId:userId,sessionStart:false, sessionEnd:false}).then((chat)=>{
+    chats.findOne({userId:userId, sessionEnd:false}).then((chat)=>{
             if (chat) {
                 req.data.message = chat
                 res.status(200).send(req.data);

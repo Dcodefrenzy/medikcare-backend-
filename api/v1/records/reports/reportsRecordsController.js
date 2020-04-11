@@ -48,7 +48,6 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
 }
 
 exports.addCompleteReportRecord = (req, res, next)=>{
-    
 
     ReportsRecords.findOne({_sessionId:req.body.chatSessionId}).then((report)=>{
         if (!report) {
