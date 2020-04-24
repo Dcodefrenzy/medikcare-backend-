@@ -28,13 +28,14 @@ exports.saveBlog = (req, res, next)=>{
     const blog = new blogs({
         topic:req.body.topic,
         article:req.body.article,
+        videoLink:req.body.videoLink,
         category:req.body.category,
         _createdBy:req.admin._id,
         dateCreated:new Date(),
 
     });
     blog.save().then((blog)=>{
-        const blogItem = {status:201,topic:blog.topic, category:blog.category, article:blog.article, _id:blog._createdBy, blogId:blog._id,}
+        const blogItem = {status:201,topic:blog.topic, category:blog.category,videoLink:blog.videoLink, article:blog.article, _id:blog._createdBy, blogId:blog._id,}
         req.data = blogItem;
 		req.data.loggerUser = "Admin";
 		req.data.logsDescription = `Admin ${req.admin.firstname+" "+req.admin.lastname} added a new blog article called ${blog.topic}`;
@@ -51,7 +52,14 @@ exports.saveBlog = (req, res, next)=>{
 }
 
 exports.getAllBlogs = (req, res,next)=>{
-    blogs.find({deleteArticle:false}).then((blog)=>{
+    blogs.find({deleteArticle:false}, null, {sort: {_id: -1}}).then((blog)=>{
+        req.data = {status:200, message:blog};
+        next();
+    })
+}
+
+exports.getAllBlogsForAdmin = (req, res,next)=>{
+    blogs.find({}, null, {sort: {_id: -1}}).then((blog)=>{
         req.data = {status:200, message:blog};
         next();
     })

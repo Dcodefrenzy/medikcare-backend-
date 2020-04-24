@@ -10,6 +10,9 @@ let blogSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	videoLink: {
+		type:String
+	},
 	category: {
 		type: Number,
 		required: true,

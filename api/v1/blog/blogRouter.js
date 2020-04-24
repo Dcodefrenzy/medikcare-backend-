@@ -12,7 +12,7 @@ router.route("/add")
     .post(adminController.adminAuthenticate, controller.saveBlog, logsController.addLogs)
 
 router.route("/")
-    .get(adminController.adminAuthenticate, controller.getAllBlogs, adminController.viewAdminsByIds)
+    .get(adminController.adminAuthenticate, controller.getAllBlogsForAdmin, adminController.viewAdminsByIds)
 
 
 router.route("/users")
