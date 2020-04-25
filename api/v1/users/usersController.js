@@ -605,19 +605,16 @@ else{
   }
 
   exports.viewUsersByIds = async(req, res)=>{
-		const newData = await req.data.message.map(async(data, index)=>{
-		const user = await users.findById({_id:data.userId});
-		
-		data.userId =  await user.firstname+" "+user.lastname;
-			
-		 return data
-		 
+		let newData;
+		 newData = await req.data.message.map(async(data, index)=>{
+		user = await  users.findById({_id:data.userId});
+		return nData = {message:data, username:user.firstname+" "+user.lastname};
 	});
 	const resp = await Promise.all(newData);
-	if(resp){
-		res.status(200).send(req.data);
-	}
+	res.status(200).send({status:200,message:resp});
+
 }
+
 
 exports.viewUserNameById = (req, res, next)=>{
 	users.findById({_id:req.params.id}).then((user)=>{
@@ -638,6 +635,20 @@ exports.fetchUserById = (req, res, next)=>{
 		const error = {status:500, message:"No user Found."}
 		res.status(500).send(error);
 	}) 
+}
+
+exports.userChatSession = (req, res, next)=>{
+	users.findOne({$or: [ {_id:req.body.from}, {_id:req.body.to}]}).then((user)=>{
+	//console.log({"user":user});
+		if (user) {
+		req.data = {"user":{_id:user._id, name:user.firstname+" "+user.lastname, email:doctorsSchema.email}};
+		next();
+		} else {
+		req.data = {"user":"No user"};		
+		next();
+		}
+
+	});
 }
 
 

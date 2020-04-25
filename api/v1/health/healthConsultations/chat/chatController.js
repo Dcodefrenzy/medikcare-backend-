@@ -70,7 +70,6 @@ exports.updateEndSession =(req, res,next)=>{
 
 exports.getSessions = (req, res, next) =>{
     chats.find({sessionStart:false, sessionEnd:false}, null, {sort: {_id: -1}}).then((chats)=>{
-        console.log(chats);
             if (chats) {
                 req.data = {status:200, message:chats};
                 next();
@@ -82,7 +81,47 @@ exports.getSessions = (req, res, next) =>{
 		res.status(403).send("No chats found");
 	});
 }
+//
+exports.getSessionForAdmin = (req, res,next)=>{
+    chats.findOne({$or: [ {userId:req.body.from, sessionEnd:false, sessionStart:true}, {userId:req.body.to, sessionEnd:false, sessionStart:true}]}).then((session)=>{
+       if (session) {
+            req.data.chatSession = req.body;
+           req.data.session = session;
+	    res.status(200).send({status:200,message:req.data});
+       }else{
+        
+        req.data.session = "No Session here";
+        req.data.chatSession = req.body;
+        res.status(200).send({status:403,message:req.data});
+       }
+    })
 
+}
+
+exports.adminRevertSession = (req, res, next)=>{
+    chats.findByIdAndUpdate({_id:req.body.id}, {$set: {sessionEnd:req.body.end, sessionStart:req.body.start}}, {new: true}).then((session)=>{
+        if (session) {
+                req.data = {"status":201, message:session};
+                if (session.sessionEnd === false) {
+                req.data.topic = "Reverting An Ongoing Medical Session"
+                req.data.logsDescription = `A session with the complains ${session.complain} was reverted back to the doctors waiting list and will be attended to by our pool of doctors, Thank you.`;
+                }else{   
+                req.data.topic = "Ending A Medical Session"
+                req.data.logsDescription = `A session with the complains ${session.complain} was Ended by Medikcare Admin, please login in ifyou want to start a new session, Thank you.`;
+                }
+                req.data.email = req.body.usermail+","+req.body.doctormail;
+                req.data.name = "User";
+               
+                req.data._id = req.admin._id;
+                req.data.loggerUser = "Admin";
+                req.data.title = "Chat Session";
+                req.data.link = "medikcare.com/";
+                next();
+        } else {
+            res.status(403).send({status:403});
+        }
+    })
+}
 
 exports.getUserSession = (req, res, next) =>{
     const userId = req.params.id;

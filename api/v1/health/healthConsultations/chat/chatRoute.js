@@ -21,7 +21,13 @@ router.route("/user/:id")
     .get(userController.userAuthenticate, controller.getUserSession)
 
 router.route("/admin")
-    .get(adminController.adminAuthenticate, controller.getSessions)
+    .get(adminController.adminAuthenticate, controller.getSessions, userController.viewUsersByIds)
+
+router.route("/admin-check")
+    .patch(adminController.adminAuthenticate, userController.userChatSession, doctorController.doctorChatSession, controller.getSessionForAdmin)
+   
+router.route("/admin-end")
+    .patch(adminController.adminAuthenticate,  controller.adminRevertSession, mailController.sendChatMail, logsController.addLogs)
 
 router.route("/start/:id")
     .patch(doctorController.doctorAuthenticate, controller.updateStartSession)

@@ -595,3 +595,18 @@ exports.updatePersonNotification=(req, res)=>{
       next();
     })
 }
+
+
+exports.doctorChatSession = (req, res, next)=>{
+	doctors.findOne({$or: [ {_id:req.body.from}, {_id:req.body.to}]}).then((doctor)=>{
+        //console.log({"doctor":doctor})
+		if (doctor) {
+        req.data.doctor = {_id:doctor._id, name:doctor.firstname+" "+doctor.lastname, email:doctor.email};
+        next();
+        } else {
+            req.data.doctor = "No doctor";
+            next();
+        }
+
+	});
+}
