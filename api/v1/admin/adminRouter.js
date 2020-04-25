@@ -7,6 +7,7 @@ const doctorController = require("../medicals/doctors/doctor/doctorsController")
 const healthQuestionController = require("../health/healthQuestions/questions/healthQuestionsController");
 const healthQuestionAnswersController = require("../health/healthQuestions/answers/answersController");
 const adsMetricsController = require("../metrics/ads/adsMetricsController");
+const chatSessionController = require("../health/healthConsultations/chat/chatController");
 const router = express.Router();
 
 
@@ -58,7 +59,7 @@ router.route("/update/password")
 	.post(controller.adminAuthenticate, controller.newPasswordChange, logController.addLogs)
 
 router.route("/metrics")
-	.get(controller.adminAuthenticate, userController.getUsersMetric, doctorController.getDoctorsMetric,healthQuestionController.getQuestionMetrics,adsMetricsController.getAdsMetricsForAll,healthQuestionAnswersController.getMetricsAnswers,controller.getAllMetrics)
+	.get(controller.adminAuthenticate, userController.getUsersMetric, doctorController.getDoctorsMetric,healthQuestionController.getQuestionMetrics,adsMetricsController.getAdsMetricsForAll,healthQuestionAnswersController.getMetricsAnswers, chatSessionController.getWaitingListMetrics, chatSessionController.getOngoingSessions, chatSessionController.getEndedSession, controller.getAllMetrics)
 
 router.route("/ads-metrics")
 		.get(controller.adminAuthenticate, adsMetricsController.getAdminAdsMetricsForAll)

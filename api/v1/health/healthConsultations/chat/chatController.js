@@ -55,7 +55,7 @@ exports.updateStartSession =(req, res,next)=>{
 exports.updateEndSession =(req, res,next)=>{
     const _id = req.body.chatSessionId;
     chats.findByIdAndUpdate(_id, {$set: {sessionEnd:true}}, {new: true}).then((chat)=>{
-        //console.log(chat)
+        console.log(chat)
         next();
 
     }).catch((e)=>{
@@ -114,4 +114,26 @@ exports.getUserSessionForDoctors = (req, res, next) =>{
         console.log(e)
 		res.status(403).send("No chats found");
 	});
+}
+
+exports.getWaitingListMetrics=(req, res, next)=>{
+	chats.countDocuments({sessionStart:false}).then((count)=>{
+		req.metric.waitingListMetrics = count;
+		next();
+	})
+}
+
+
+exports.getOngoingSessions=(req, res, next)=>{
+	chats.countDocuments({sessionStart:true, sessionEnd:false}).then((count)=>{
+		req.metric.ongoingSessionsMetrics = count;
+		next();
+	})
+}
+
+exports.getEndedSession=(req, res, next)=>{
+	chats.countDocuments({sessionStart:true, sessionEnd:true}).then((count)=>{
+		req.metric.endedSessionMetrics = count;
+		next();
+	})
 }
