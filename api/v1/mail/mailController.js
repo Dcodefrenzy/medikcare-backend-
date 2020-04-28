@@ -12,7 +12,7 @@ let options = {
 
 exports.mailArrayOfUsers = async (req,res)=>{
 	const mailler = await req.data.users.map((user)=>{
-		const url = `https://medikcare.com/blog/${req.data._id}`
+		const url = `https://medikcare.com/blog/${req.params.id}`
 		let email = {
 			to: user.email,
 			from: `"${req.admin.firstname} from Medikcare" ${req.admin.email}`,
