@@ -14,7 +14,7 @@ const chatSessionController = require("../../../health/healthConsultations/chat/
 
 
 router.route("/register")
-    .post(doctorsController.doctorRegister, doctorsRecordsController.addDoctorsRecords, mailerController.sendRegistrationMail, logsController.addLogs);
+    .post(doctorsController.doctorRegister, doctorsRecordsController.addDoctorsRecords, mailerController.sendRegistrationMail, mailerController.adminNotification, logsController.addLogs);
 
 router.route("/login")
     .post(doctorsController.doctorLogin);

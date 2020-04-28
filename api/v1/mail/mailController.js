@@ -15,7 +15,7 @@ exports.mailArrayOfUsers = async (req,res)=>{
 		const url = `https://medikcare.com/blog/${req.data._id}`
 		let email = {
 			to: user.email,
-			from: `"Kolade from Medikcare" kolade@medikcare.com`,
+			from: `"${req.admin.firstname} from Medikcare" ${req.admin.email}`,
 			subject: 'MedikByte',
 			text: '',
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><p>On medikByte this week we will be talking about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.article} </div> <p>To read more please click on this link </p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
