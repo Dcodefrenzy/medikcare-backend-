@@ -5,6 +5,8 @@ const {doctors} = require("./doctorsModel");
 const multer = require('multer');
 const path = require('path');
 require('dotenv').config()
+const OneSignal = require('onesignal-node');
+const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
 
 let imgPath;
 if ( process.env.DEV_ENV) {
@@ -516,24 +518,34 @@ exports.updatePersonNotification=(req, res)=>{
    }) 
 }
  exports.notifyDoctor  = async (req, res)=>{
-   console.log({"req.body":req.body})
     const _id = req.body.to;
     const mes = req.body.message;
-   doctors.findById({_id}).then((doctor)=>{
+   doctors.findById({_id}).then(async(doctor)=>{
        if (!doctor) {
            const error = {status:403, message:"Unable to find user id."}
            res.status(403).send(error);
        }else {
-           console.log(doctor)
-        playerId = doctor.playerId;		
-        let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
+            playerId = doctor.playerId;		
         const message = { 
-        app_id: appid,
-        contents: {"en": mes},
-        include_player_ids: [playerId]
-      };
-        sendNotification(message);  
-        res.status(200).send({status:201});
+            contents: {"en": mes},
+            include_player_ids: [playerId]
+            }
+
+            try {
+                const response = await client.createNotification(message);
+                
+            res.status(200).send({status:200});
+                console.log(response.body.id);
+            } catch (e) {
+                if (e instanceof OneSignal.HTTPError) {
+                // When status code of HTTP response is not 2xx, HTTPError is thrown.
+                console.log(e.statusCode);
+                console.log(e.body);
+                res.send({status:403});
+                }
+            }
+        
+    
        }
    }).catch((e)=>{
        console.log(e)
@@ -547,17 +559,23 @@ exports.updatePersonNotification=(req, res)=>{
         return doctor.playerId;  
       });
     	
-      let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
+     
       const message = { 
-      app_id: appid,
       contents: {"en": req.data.topic},
       include_player_ids: [response]
       }
       
-      sendNotification(message); 
+      client.createNotification(message)
+      .then(res => {
+          console.log(res);
+        res.status(200).send({status:200, message:"Your question has been sent to our docotrs."});
+      }).catch(e => {
+          console.log(e)
+      });
     
-      res.status(201).send({status:201, message:"Your question has been sent to our docotrs."});
+    
  }
+
 
   function sendNotification(data) {
 	var headers = {

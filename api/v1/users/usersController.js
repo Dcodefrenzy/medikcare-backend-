@@ -5,7 +5,9 @@ const {users} = require("./usersModel.js");
 const _ = require('lodash');
 const multer = require('multer');
 const path = require('path');
-require('dotenv').config()
+require('dotenv').config();
+const OneSignal = require('onesignal-node');
+const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
 
 let imgPath;
 if ( process.env.DEV_ENV) {
@@ -155,21 +157,29 @@ exports.getUserMailsAndPlayerIDs= async (req, res, next)=>{
 exports.notifyUser = (req, res)=>{
    const _id = req.body.to;
    const mes = req.body.message;
-  users.findById({_id}).then((user)=>{
+  users.findById({_id}).then(async(user)=>{
 	  if (!user) {
 		  const error = {status:403, message:"Unable to find user id."}
 		  res.status(403).send(error);
 	  }else {
-	   playerId = user.playerId;
-	   
-		let appid = "49bc3735-1264-4e8a-a146-f4291107deba";
-	   const message = { 
-	   app_id: appid,
-	   contents: {"en": mes},
-	   include_player_ids: [playerId]
-	 };
-		if (sendNotification(message)) {     
+		playerId = user.playerId;
+		const message = { 
+			contents: {"en": mes},
+			include_player_ids: [playerId]
+			}
+
+		try {
+			const response = await client.createNotification(message);
+			
 			res.status(200).send({status:200});
+			console.log(response.body.id);
+		} catch (e) {
+			if (e instanceof OneSignal.HTTPError) {
+			// When status code of HTTP response is not 2xx, HTTPError is thrown.
+			console.log(e.statusCode);
+			console.log(e.body);
+			res.send({status:403});
+			}
 		}
 	  }
   }).catch((e)=>{
