@@ -167,7 +167,7 @@ exports.notifyUser = (req, res)=>{
 			contents: {"en": mes},
 			include_player_ids: [playerId]
 			}
-
+			console.log(req.body);
 		try {
 			const response = await client.createNotification(message);
 			
