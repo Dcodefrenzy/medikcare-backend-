@@ -228,7 +228,7 @@ All doctors can be accessed by admins only.
 
 */
 exports.doctors = (req, res, next) => {
-    doctors.find().then((doctors)=>{
+    doctors.find({deleteUser:false}).then((doctors)=>{
         if(!doctors) {
             const error = {status:403, message:"No doctors registered yet"}
             return res.status(403).send(error);
@@ -608,7 +608,7 @@ exports.updatePersonNotification=(req, res)=>{
   };
 
   exports.getDoctorsMetric = (req, res, next)=>{
-    doctors.countDocuments().then((count)=>{
+    doctors.countDocuments({deleteUser:false}).then((count)=>{
       req.metric.doctorMetric =count;
       next();
     })
