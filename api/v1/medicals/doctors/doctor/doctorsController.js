@@ -325,7 +325,7 @@ exports.findAdminDoctorByID = (req, res, next) => {
             return res.status(403).send(error);
         }else {
             return doctor.generateAuthToken().then((token)=>{
-                req.data = {status:200, token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id};
+                req.data = {status:200, token:token, email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id, isDoctor:true};
                next()
             })
         }
