@@ -153,7 +153,7 @@ doctorsSchema.methods.toJSON = function(){
 			const doctor = this;
 			const access = 'u-auth';
 			//using the user id to generate a token which will expire.
-			const token = jwt.sign({_id: doctor._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: '12h'});
+			const token = jwt.sign({_id: doctor._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: 86400});
 			return doctor.save().then(()=>{
 				return token;
 				next()

@@ -132,7 +132,7 @@ let adminSchema = new mongoose.Schema({
 	adminSchema.methods.generateAuthToken = function(){
 		var admin = this;
 		var access = 'auth';
-		var token = jwt.sign({_id: admin._id.toHexString(), access}, 'mobigasapp##', {expiresIn: '24h'});	
+		var token = jwt.sign({_id: admin._id.toHexString(), access}, 'mobigasapp##', {expiresIn: 86400});	
 		return admin.save().then(()=>{
 			return token;
 		});

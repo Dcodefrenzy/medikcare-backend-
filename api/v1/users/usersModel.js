@@ -138,7 +138,7 @@ const userSchema = new mongoose.Schema({
 		const user = this;
 		const access = 'auth';
 		//using the user id to generate a token which will expire.
-		const token = jwt.sign({_id: user._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: '12h'});
+		const token = jwt.sign({_id: user._id.toHexString(), access}, 'mongsufsrenz##', {expiresIn: 86400});
 	
 		return user.save().then(()=>{
 			return token;
