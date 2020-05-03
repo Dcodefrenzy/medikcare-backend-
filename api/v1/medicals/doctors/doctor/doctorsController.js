@@ -342,7 +342,7 @@ exports.findUserDoctorByID = (req, res, next) => {
             const error = {status:403, message:"No doctors registered yet"}
             return res.status(403).send(error);
         }else {
-            res.status(200).send({"status":200,"message": {email:doctor.email, name:doctor.firstname +" "+ doctor.lastname, _id:doctor._id}})
+            res.status(200).send({"status":200,"message": {email:doctor.email, name:"DR. "+doctor.firstname +" "+ doctor.lastname, _id:doctor._id}})
         }
     }).catch((e)=>{
        // console.log(e)
