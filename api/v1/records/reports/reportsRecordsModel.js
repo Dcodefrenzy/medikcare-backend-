@@ -22,6 +22,14 @@ ReportsRecordsSchema = mongoose.Schema({
             type:Boolean,
             required:true,
         },
+        plan:{
+            type:String,
+            required:false,
+        },
+        appointmentDate:{
+            type:Date,
+            require:false,
+        },
 		_userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			required:true,

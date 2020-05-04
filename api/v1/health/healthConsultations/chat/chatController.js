@@ -55,7 +55,7 @@ exports.updateStartSession =(req, res,next)=>{
 exports.updateEndSession =(req, res,next)=>{
     const _id = req.body.chatSessionId;
     chats.findByIdAndUpdate(_id, {$set: {sessionEnd:true}}, {new: true}).then((chat)=>{
-        console.log(chat)
+        //console.log(chat)
         next();
 
     }).catch((e)=>{

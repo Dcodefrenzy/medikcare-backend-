@@ -617,7 +617,9 @@ else{
   exports.viewUsersByIds = async(req, res)=>{
 		let newData;
 		 newData = await req.data.message.map(async(data, index)=>{
-		user = await  users.findById({_id:data.userId});
+			 const id = data.userId || data._userId;
+			 console.log(id)
+		user = await  users.findById({_id:id});
 		return nData = {session:data, name:user.firstname+" "+user.lastname};
 	});
 	const resp = await Promise.all(newData);

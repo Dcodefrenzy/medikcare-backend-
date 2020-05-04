@@ -48,7 +48,7 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
 }
 
 exports.addCompleteReportRecord = (req, res, next)=>{
-
+    console.log(req.body)
     ReportsRecords.findOne({_sessionId:req.body.chatSessionId}).then((report)=>{
         if (!report) {
             ReportsRecord = new ReportsRecords({
@@ -56,6 +56,8 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     medication:req.body.medication,
                     test:req.body.test,
                     diagnoses:req.body.diagnoses,
+                    plan:req.body.plan,
+                    appointmentDate:req.body.appointmentDate,
                     complete: true,
                     _doctorId: req.body._doctorId,
                     _userId: req.body._userId,
@@ -63,10 +65,9 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     dateCreated:new Date(),
             });
             ReportsRecord.save().then((record)=>{
-                if (!record) {
-                     
-			const error = {status:404, message:"Unable to add report."}
-			return res.status(404).send(error); 
+                if (!record) {    
+                    const error = {status:404, message:"Unable to add report."}
+                    return res.status(404).send(error); 
                 }else if (record) {
                     req.data = {}
                     req.data.title = "Medical chat Session Ended"
@@ -90,8 +91,10 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                 medication:req.body.medication,
                 test:req.body.test,
                 diagnoses:req.body.diagnoses,
+                plan:req.body.plan,
                 complete: true,
                 complains:req.body.complains,
+                appointmentDate:req.body.appointmentDate,
         });
         ReportsRecords.findByIdAndUpdate({_id:report._id}, {$set: {complains:rec.complains,medication:rec.medication, test:rec.test, diagnoses:rec.diagnoses,complete:true}}, {new: true}).then((record)=>{
                 if (!record) {
@@ -157,6 +160,22 @@ exports.getUserReportsForDoctors = (req,res,next)=>{
         res.status(404).send({status:404,message:"No reports"})
     })
 }
+
+exports.getDoctorsReports =(req, res,next)=>{
+    ReportsRecords.find({_doctorId:req.doctor._id}).then((reports)=>{
+        if (reports) {
+            req.data = {status:200, message:chats};
+            next();
+        }else{
+            return res.status(403).send({status:403, message:"No previous session found"});
+        }
+        next();
+    }).catch((e)=>{
+        console.log(e)
+        res.status(404).send({status:404,message:"No reports"})
+    })
+}
+
 
 exports.getUserReport = (req, res, next)=>{
 

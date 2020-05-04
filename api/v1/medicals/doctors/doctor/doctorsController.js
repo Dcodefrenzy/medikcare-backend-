@@ -631,7 +631,7 @@ exports.updatePersonNotification=(req, res)=>{
 
 
 exports.doctorChatSession = (req, res, next)=>{
-    console.log(req.body)
+    
 	doctors.findOne({$or: [ {_id:req.body.from}, {_id:req.body.to}]}).then((doctor)=>{
         //console.log({"doctor":doctor})
 		if (doctor) {
