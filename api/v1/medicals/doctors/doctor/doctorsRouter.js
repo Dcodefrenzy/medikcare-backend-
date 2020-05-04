@@ -73,6 +73,9 @@ router.route("/find-user/:id")
 router.route("/admin/delete/:id")
     .patch(adminAuth.adminAuthenticate, doctorsController.deleteDoctor, logsController.addLogs)
 
+router.route("/users-session")
+    .post(doctorsController.doctorAuthenticate, userController.getUsersSessions, doctorsController.getDoctorsSession)
+
 
 
     module.exports = router;

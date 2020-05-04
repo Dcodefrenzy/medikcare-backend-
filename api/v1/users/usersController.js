@@ -618,11 +618,24 @@ else{
 		let newData;
 		 newData = await req.data.message.map(async(data, index)=>{
 		user = await  users.findById({_id:data.userId});
-		return nData = {message:data, username:user.firstname+" "+user.lastname};
+		return nData = {session:data, name:user.firstname+" "+user.lastname};
 	});
 	const resp = await Promise.all(newData);
 	res.status(200).send({status:200,message:resp});
 
+}
+
+exports.getUsersSessions = async(req, res,next)=>{
+	req.data= [];
+	let newData;
+	newData = await req.body.map(async(data, index)=>{
+   user = await  users.findOne({$or: [ {_id:data.from}, {_id:data.to}]});
+    req.data.push({ sessions: JSON.stringify(data), users: JSON.stringify(user) });
+});
+const resp = await Promise.all(newData);
+if (resp) {
+	next();
+}
 }
 
 
@@ -648,6 +661,7 @@ exports.fetchUserById = (req, res, next)=>{
 }
 
 exports.userChatSession = (req, res, next)=>{
+	console.log(req.body)
 	users.findOne({$or: [ {_id:req.body.from}, {_id:req.body.to}]}).then((user)=>{
 	//console.log({"user":user});
 		if (user) {

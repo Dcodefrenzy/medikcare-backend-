@@ -26,6 +26,9 @@ router.route("/admin")
 router.route("/admin-check")
     .patch(adminController.adminAuthenticate, userController.userChatSession, doctorController.doctorChatSession, controller.getSessionForAdmin)
    
+ router.route("/doctor-check")
+    .patch(doctorController.doctorAuthenticate, userController.userChatSession, doctorController.doctorChatSession, controller.getSessionForAdmin)
+      
 router.route("/admin-end")
     .patch(adminController.adminAuthenticate,  controller.adminRevertSession, mailController.sendChatMail, logsController.addLogs)
 

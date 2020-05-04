@@ -460,6 +460,21 @@ exports.newPasswordChange =(req, res, next) =>{
 	})
 }
 
+exports.getDoctorsSession=async(req, res,next)=>{
+    
+	let newData;
+    
+     newData = await req.data.map(async(data, index)=>{
+            const sessions = JSON.parse(data.sessions);
+            const users = JSON.parse(data.users);
+            const doctor = await doctors.findOne({$or: [ {_id:sessions.from}, {_id:sessions.to}]});
+            return ndata = {sessions:sessions, users:users, doctors:doctor};
+	});
+	const resp = await Promise.all(newData);
+	if(resp){
+		res.status(200).send({status:200, message:resp});
+	}
+}
 exports.viewDoctorByIds = async(req, res)=>{
 	const newData = await req.data.message.map(async(data, index)=>{
 		const doctor = await doctors.findById({_id:data. _doctorId});
@@ -616,6 +631,7 @@ exports.updatePersonNotification=(req, res)=>{
 
 
 exports.doctorChatSession = (req, res, next)=>{
+    console.log(req.body)
 	doctors.findOne({$or: [ {_id:req.body.from}, {_id:req.body.to}]}).then((doctor)=>{
         //console.log({"doctor":doctor})
 		if (doctor) {
