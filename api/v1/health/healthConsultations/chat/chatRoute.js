@@ -5,6 +5,7 @@ const userController = require("../../../users/usersController");
 const doctorController = require("../../../medicals/doctors/doctor/doctorsController");
 const adminController = require("../../../admin/adminController");
 const mailController = require("../../../mail/mailController");
+const reportController = require("../../../records/reports/reportsRecordsController");
 const router = express.Router();
 
 
@@ -34,6 +35,10 @@ router.route("/admin-end")
 
 router.route("/start/:id")
     .patch(doctorController.doctorAuthenticate, controller.updateStartSession)
+
+router.route("/read-user/:id")
+    .get(doctorController.doctorAuthenticate, userController.viewUserNameById, controller.getUserSessionForUpdate, reportController.getUserReportForDoctors)
+
 
 
  module.exports = router;

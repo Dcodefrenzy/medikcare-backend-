@@ -61,8 +61,8 @@ router.route("/logout")
 router.route("/update/notification/:playerId")
     .patch(doctorsController.doctorAuthenticate, doctorsController.updatePersonNotification)
 		
-router.route("/report/add")
-    .post(doctorsController.doctorAuthenticate, chatSessionController.updateEndSession, userReportController.addCompleteReportRecord, logsController.addLogNext, userController.findUserByID,mailerController.sendChatMail, logsController.notifyLogUser)
+router.route("/session/end")
+    .post(doctorsController.doctorAuthenticate, chatSessionController.updateEndSession, logsController.addLogNext, userController.findUserByID,mailerController.sendChatMail, logsController.notifyLogUser)
 
 router.route("/notify-doctor")
     .post(userController.userAuthenticate, doctorsController.notifyDoctor)

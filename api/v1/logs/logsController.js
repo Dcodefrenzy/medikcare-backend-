@@ -162,6 +162,7 @@ exports.notifyLogUser = (req, res)=>{
 		url:url,
 		include_player_ids: [playerId]
 	  };
+	  console.log(message)
 		 sendNotification(message)    
 		res.status(201).send({status:201});
  }

@@ -30,6 +30,25 @@ ReportsRecordsSchema = mongoose.Schema({
             type:Date,
             require:false,
         },
+        drugs:[{
+            name:{
+                type:String,
+                required:false,
+            },
+            interval:{
+                type:Number,
+                required:false,
+            },
+            duration:{
+                type:Number,
+                required:false,
+            },
+        }],
+        labTest:[{
+            name:{
+                type:String,
+            }
+        }],
 		_userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			required:true,

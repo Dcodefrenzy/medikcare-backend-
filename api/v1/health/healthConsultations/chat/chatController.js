@@ -54,9 +54,25 @@ exports.updateStartSession =(req, res,next)=>{
 }
 exports.updateEndSession =(req, res,next)=>{
     const _id = req.body.chatSessionId;
+    console.log(_id)
     chats.findByIdAndUpdate(_id, {$set: {sessionEnd:true}}, {new: true}).then((chat)=>{
-        //console.log(chat)
-        next();
+        if (!chat) {
+            console.log("here")
+            return res.status(403).send({status:403, message:"No chat found"});
+        }
+        req.data = chat;
+        req.data.title = "Medical chat Session Ended"
+         req.data.link = "https://medikcare.com/chat/feedback/"+req.doctor._id+"/"+req.body.chatSessionId;
+         req.data.topic = "Your Medical Report Is Ready"; 
+         req.data.logsDescription = "Dr "+req.doctor.firstname+" "+req.doctor.lastname+" has ended a medical session with you and has filled your medical report. Please check your dashboard to see your doctor's report. Also, Please click on the link below to share your experince using oursite thank. If you have already filled it you can ignore this request.";
+         req.data.loggerUser = "Doctor";		
+         req.data.status = 201;
+         req.data._idTo = req.doctor._id;
+         req.data.loggerUserTo = "User";
+         req.data.logsDescriptionTo = "User has Ended Consultation";
+         req.data.title = "Chat";
+         next();
+
 
     }).catch((e)=>{
         console.log(e)
@@ -138,6 +154,21 @@ exports.getUserSession = (req, res, next) =>{
 	});
 }
 
+exports.getUserSessionForUpdate = (req, res, next)=>{
+    const userId = req.params.id;
+    chats.findOne({userId:userId, sessionEnd:false}).then((chat)=>{
+            if (chat) {
+                req.data.session = chat
+                next();
+               
+            }else{
+                return res.status(403).send({status:403, message:"No chats found"});
+            }
+    }).catch((e)=>{
+        console.log(e)
+		res.status(403).send("No chats found");
+	});
+}
 
 exports.getUserSessionForDoctors = (req, res, next) =>{
     const userId = req.params.id;

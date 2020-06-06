@@ -48,7 +48,6 @@ exports.addIncompleteReportRecord = (req, res, next)=>{
 }
 
 exports.addCompleteReportRecord = (req, res, next)=>{
-    console.log(req.body)
     ReportsRecords.findOne({_sessionId:req.body.chatSessionId}).then((report)=>{
         if (!report) {
             ReportsRecord = new ReportsRecords({
@@ -65,6 +64,7 @@ exports.addCompleteReportRecord = (req, res, next)=>{
                     dateCreated:new Date(),
             });
             ReportsRecord.save().then((record)=>{
+                console.log(record);
                 if (!record) {    
                     const error = {status:404, message:"Unable to add report."}
                     return res.status(404).send(error); 
@@ -161,6 +161,16 @@ exports.getUserReportsForDoctors = (req,res,next)=>{
     })
 }
 
+exports.getUserReportForDoctors = (req,res,next)=>{
+    ReportsRecords.findOne({_sessionId:req.data.session._id}).then((report)=>{
+            req.data.report = report;
+        res.status(200).send(req.data)
+    }).catch((e)=>{
+        console.log(e)
+        res.status(404).send({status:404,message:"No reports"})
+    })
+}
+
 exports.getDoctorsReports =(req, res,next)=>{
     ReportsRecords.find({_doctorId:req.doctor._id}).then((reports)=>{
         if (reports) {
@@ -178,20 +188,144 @@ exports.getDoctorsReports =(req, res,next)=>{
 
 
 exports.getUserReport = (req, res, next)=>{
-
     const _id = req.params.id;
-
     ReportsRecords.findOne({ _id:_id}).then((report)=>{
         if (!report) {
             res.status(404).send({status:404,message:"No report"})
         }else{
-            
             req.data =  {status:200,message:report};
-          
             next();
         }
     }).catch((e)=>{
         console.log(e)
         res.status(404).send({status:404,message:"No reports"})
     })
+}
+
+
+exports.updateReport = (req, res, next)=>{
+    const _sessionId = req.body._sessionId;
+    const drugs = [{name:req.body.name, interval:req.body.interval, duration:req.body.duration}];
+    ReportsRecords.findOne({_sessionId:_sessionId}).then((record)=>{
+        if (record) {
+            ReportsRecords.findOneAndUpdate({_sessionId:_sessionId}, {$set: {complains:req.body.complains, diagnoses:req.body.diagnoses, plan:req.body.plan, appointmentDate:req.body.appointmentDate, complete: true,}}, {new: true}).then((report)=>{  
+            req.data = report;
+            next();
+            })
+        }else{  
+            ReportsRecord = new ReportsRecords({
+                complains:req.body.complains,
+                diagnoses:req.body.diagnoses,
+                plan:req.body.plan,
+                appointmentDate:req.body.appointmentDate,
+                complete: true,
+                _doctorId: req.body._doctorId,
+                _userId: req.body._userId,
+                _sessionId:req.body.chatSessionId,
+                dateCreated:new Date(),
+        });
+
+        ReportsRecord.save().then((report)=>{
+            req.data = report;
+            next();
+        })
+
+        }
+    }).catch((e)=>{
+        console.log(e);
+    })
+}
+
+exports.updateMedications = (req, res)=>{
+    const _sessionId = req.body._sessionId;
+    const drugs = [{name:req.body.name, interval:req.body.interval, duration:req.body.duration}];
+    console.log(drugs)
+    ReportsRecords.findOne({_sessionId:_sessionId}).then((record)=>{
+        if (record) {
+            ReportsRecords.findOneAndUpdate({_sessionId:_sessionId}, {$push: {drugs:drugs}}, {new: true}).then((report)=>{
+                res.status(200).send({status:200, report:report});
+            })
+        }else{
+            ReportsRecord = new ReportsRecords({
+                drugs:drugs,
+                complete: false,
+                _doctorId: req.body._doctorId,
+                _userId: req.body._userId,
+                _sessionId:_sessionId,
+                dateCreated:new Date(),
+        });
+
+        ReportsRecord.save().then((report)=>{
+            res.status(200).send({status:200, report:report});
+        })
+
+        }
+    }).catch((e)=>{
+        console.log(e);
+    })
+}
+
+
+exports.updateTest = (req, res)=>{
+    const _sessionId = req.body._sessionId;
+    const labTest = [{name:req.body.labTest}];
+    ReportsRecords.findOne({_sessionId:_sessionId}).then((record)=>{
+        if (record) {
+            ReportsRecords.findOneAndUpdate({_sessionId:_sessionId}, {$push: {labTest:labTest}}, {new: true}).then((report)=>{
+                res.status(200).send({status:200, report:report});
+            })
+        }else{
+            ReportsRecord = new ReportsRecords({
+                labTest:labTest,
+                complete: false,
+                _doctorId: req.body._doctorId,
+                _userId: req.body._userId,
+                _sessionId:_sessionId,
+                dateCreated:new Date(),
+        });
+
+        ReportsRecord.save().then((report)=>{
+            res.status(200).send({status:200, report:report});
+        })
+
+        }
+    }).catch((e)=>{
+        console.log(e);
+    })
+}
+
+exports.deleteTest=(req, res)=>{
+    const _sessionId= req.params.id;
+    const labTestId = req.params.test;
+    ReportsRecords.findOneAndUpdate({"_sessionId":_sessionId, "labTest._id":labTestId}, {$pull: {"labTest": {"_id": {$in:[labTestId]}}}}, {new: true}).then((report)=>{        
+    if (!report) {
+        res.status(404).send({status:404,message:"No report"});  
+    }
+        res.status(200).send({status:200, report:report});
+    }).catch((e)=>{
+        console.log(e)
+		let err ={}
+		if(e.errors) {err = {status:403, message:e.errors}}
+		else if(e){err = {status:403, message:e}}
+		res.status(403).send(err);
+	});
+    
+}
+
+exports.deleteMedication=(req, res)=>{
+    const _sessionId= req.params.id;
+    const medicationId = req.params.medication;
+    ReportsRecords.findOneAndUpdate({"_sessionId":_sessionId, "drugs._id":medicationId}, {$pull: {"drugs": {"_id": {$in : [medicationId]}}}}, {new: true}).then((report)=>{
+        if (!report) {
+            res.status(404).send({status:404,message:"No report"});  
+        }
+        res.status(200).send({status:200, report:report});
+    }).catch((e)=>{
+        console.log(e)
+		let err ={}
+		if(e.errors) {err = {status:403, message:e.errors}}
+		else if(e){err = {status:403, message:e}}
+		res.status(403).send(err);
+	});
+    
 }

@@ -471,8 +471,9 @@ exports.logout =(req, res, next)=>{
 }
 exports.findUserByID = (req, res, next) => {
     const _id = req.body._userId;
- 
+ console.log({"uid":_id})
     users.findById(_id).then((user)=>{
+		console.log(user)
         if(!user) {
             const error = {status:403, message:"No user registered yet"}
             return res.status(403).send(error);
