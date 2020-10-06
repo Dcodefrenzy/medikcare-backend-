@@ -10,13 +10,15 @@ let imgPath;
 if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
 }else{
-	imgPath = "/../../../../client/build/Images"
+    imgPath = "/../../../../client/build/Images";
+    imgPath2 = "/../../../../client/public/Images";
 }
 
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 	  cb(null, path.join(__dirname, imgPath))
+	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '-' +file.originalname )

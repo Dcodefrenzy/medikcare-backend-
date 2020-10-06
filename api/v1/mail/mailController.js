@@ -2,13 +2,14 @@ let nodemailer = require('nodemailer');
 let sgTransport = require('nodemailer-sendgrid-transport');
 require('dotenv').config()
 
-let options = {
+
+  let client = nodemailer.createTransport({
+	service: 'gmail',
 	auth: {
-	  api_user: process.env.SENDGRID_API_USER,
-	  api_key: process.env.SENDGRID_API_PASS,
+	  user: process.env.Email,
+	  pass: process.env.Pass,
 	}
-  }
-  let client = nodemailer.createTransport(sgTransport(options));
+});
 
 exports.mailArrayOfUsers = async (req,res)=>{
 	const mailler = await req.data.users.map((user)=>{
@@ -21,7 +22,8 @@ exports.mailArrayOfUsers = async (req,res)=>{
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><p>On medikByte this week we will be talking about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.article} </div> <p>To read more please click on this link </p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
-				console.log('Message sent: ' + info);
+			
+				console.log('Message sent: ' + info.response);
 				return "Message sent";
 			});
 	})
@@ -40,7 +42,7 @@ exports.mailArrayOfUsersMailler = async (req,res, next)=>{
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><div style="margin-bottom:50px">${req.data.message.message} </div> <p style="margin-bottom:10px">Best Regards,<p><p>${req.admin.firstname+" "+req.admin.lastname}</p></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
-				console.log('Message sent: ' + info);
+				console.log('Message sent: ' + info.response);
 				return  "Message sent";
 			});
 	})
@@ -65,7 +67,7 @@ exports.mailExternalMailler = async (req,res, next)=>{
 					console.log(err);
 				  }
 				  else {
-					console.log('Message sent: ' + info);
+					console.log('Message sent: ' + info.response);
 				  }
 				  next()
 			});
@@ -82,7 +84,7 @@ exports.sendDoctorsQuestionMail = async(req, res, next)=>{
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Dr. ${doctor.firstname+" "+doctor.lastname},</h1><p>A patient just asked a question about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.description} </div> <p> please click on this link  to respond.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
-				console.log('Message sent: ' + info);
+				console.log('Message sent: ' + info.response);
 				return "Message sent";
 			});
 	})
@@ -101,7 +103,7 @@ exports.sendDoctorsChatSession = async(req, res, next)=>{
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello Dr. ${doctor.firstname+" "+doctor.lastname},</h1><p>A patient just created a session and made a complain</p><p><b>Patient Complain: </b>${req.data.complain}</p> <p> please click on this link  to respond.</p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
-				console.log('Message sent: ' + info);
+				console.log('Message sent: ' + info.response);
 				return "Message sent";
 			});
 	})
@@ -140,7 +142,7 @@ exports.mailUsers = (req, res)=>{
 			res.status(403).send({status:403});
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 			res.status(200).send({status:200});
 		  }
 	  });	
@@ -173,7 +175,7 @@ exports.sendRegistrationMail = (req, res, next) =>{
 			console.log(err);
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 		  }
 		  next()
 	  });
@@ -204,7 +206,7 @@ exports.sendWelcomeMail = (req, res, next) =>{
 			console.log(err);
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 		  }
 		  next()
 	  });
@@ -236,7 +238,7 @@ exports.onboardingCustomers = (req, res, next) =>{
 			console.log(err);
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 		  }
 		  next()
 	  });
@@ -271,7 +273,7 @@ exports.adminNotification = (req, res, next) =>{
 			console.log(err);
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 		  }
 		  next()
 	  });
@@ -295,7 +297,7 @@ exports.userNotification = (req, res, next) =>{
 			console.log(err);
 		  }
 		  else {
-			console.log('Message sent: ' + info);
+			console.log('Message sent: ' + info.response);
 		  }
 		  res.status(201).send({status:201, message:`/${req.params.ansId}?Thank you for submitting your answer.`})
 	  });
@@ -321,7 +323,7 @@ exports.sendChatMail = (req, res, next) =>{
 			  console.log(err);
 			}
 			else {
-			  console.log('Message sent: ' + info);
+			  console.log('Message sent: ' + info.response);
 			}
 			next()
 		});
