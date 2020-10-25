@@ -14,6 +14,7 @@ const imagesRouter = require("./images/imagesRouter");
 const maillerRouter = require("./mailer/mailerRouter");
 const chatRouter = require("./health/healthConsultations/chat/chatRoute")
 const userReportRouter = require("./records/reports/reportsRecordsRouter");
+const appointmentRouter = require("./health/healthAppointments/healthAppontmentRouter");
 
 
 api.use("/admins", adminRouter);
@@ -30,6 +31,7 @@ api.use("/images", imagesRouter);
 api.use("/mailler", maillerRouter);
 api.use("/chatSession", chatRouter);
 api.use("/userReport", userReportRouter);
+api.use("/appointment", appointmentRouter);
 
 
 module.exports = api;

@@ -29,6 +29,23 @@ exports.createSession = (req, res, next)=>{
 	});
 }
 
+
+ exports.appointmentSession = async(appointments)=>{
+       const allSession = appointments.map(async(appointment)=>{
+            const chat = new chats({
+                sessionStart:false,
+                sessionEnd:false,
+                complain:"This consultation is a follow up consultation.",
+                emergencyLevel:1,
+                userId:appointment.user._id,
+            });
+            const session = await chat.save();
+            return sessionAppointments = {appointment:appointment.appointment, user:appointment.user, doctor:appointment.doctor, session:session}
+        })
+        const sessions = await Promise.all(allSession);
+        return sessions;
+}
+
 exports.updateStartSession =(req, res,next)=>{
     const _id = req.params.id;
     chats.findOneAndUpdate({userId:_id, sessionStart:false}, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
@@ -67,9 +84,9 @@ exports.updateEndSession =(req, res,next)=>{
          req.data.logsDescription = "Dr "+req.doctor.firstname+" "+req.doctor.lastname+" has ended a medical session with you and has filled your medical report. Please check your dashboard to see your doctor's report. Also, Please click on the link below to share your experince using oursite thank. If you have already filled it you can ignore this request.";
          req.data.loggerUser = "Doctor";		
          req.data.status = 201;
-         req.data._idTo = req.doctor._id;
+         req.data._idTo = req.body._userId;
          req.data.loggerUserTo = "User";
-         req.data.logsDescriptionTo = "User has Ended Consultation";
+         req.data.logsDescriptionTo = "Doctor has Ended Consultation, please check your medical report";
          req.data.title = "Chat";
          next();
 
@@ -206,4 +223,29 @@ exports.getEndedSession=(req, res, next)=>{
 		req.metric.endedSessionMetrics = count;
 		next();
 	})
+}
+
+exports.updateAppointmentSession =(req, res,next)=>{
+    console.log(req.data)
+    const user = req.data.user;
+    chats.findOneAndUpdate({_id:req.data.appointment.sessionId}, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
+        req.data.status = 201;
+        req.data._id = req.data.appointment.user;
+        req.data.loggerUser = "User";
+        req.data.logsDescription = `A follow up session have been created for you.`;
+        req.data.title = "Chat";
+        req.data.topic = "New Medical session"
+        req.data.link = "medikcare.com/chat/doctors";
+        req.data.loggerUserTo = "Doctor";
+        req.data.logsDescriptionTo = "A follow up medical consultation have been started for you.";
+        req.data._idTo = req.data.appointment.doctor;
+            next();
+    }).catch((e)=>{
+        console.log(e)
+		let err ={}
+		if(e.errors) {err = {status:403, message:e.errors}}
+		else if(e){err = {status:403, message:e}}
+		res.status(403).send(err);
+	});
+ 
 }

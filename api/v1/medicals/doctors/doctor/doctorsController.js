@@ -272,6 +272,19 @@ exports.getAllDoctorsForMail=(req, res, next)=>{
     })
 }
 
+
+exports.getDoctorsForAppointment = async(appointments)=>{
+	let newData;
+	 newData = await appointments.map(async(appointment, index)=>{
+
+	const doctor = await  doctors.findById({_id:appointment.appointment.doctor});
+	return nData = {appointment:appointment.appointment, user:appointment.user, doctor:doctor};
+});
+
+const resp = await Promise.all(newData);
+return resp
+}
+
 exports.findDoctor = (req, res, next) => {
     const _id = req.params.id;
     //console.log(_id);
@@ -299,7 +312,13 @@ exports.findDoctor = (req, res, next) => {
 }
 
 exports.findDoctorByID = (req, res, next) => {
-    const _id = req.body._doctorId;
+
+    let _id;
+        if (!req.data) {
+            _id = req.body._doctorId;
+        }else if (req.data) {
+            _id = req.data.appointment.doctor;
+        }
     
     doctors.findById(_id).then((doctor)=>{
         if(!doctors) {
@@ -531,6 +550,28 @@ exports.updatePersonNotification=(req, res)=>{
        const error = {status:403, message:"Unable to logout."}
        res.status(403).send(error);
    }) 
+}
+exports.notifyDoctorAppointment = async(req, res)=>{
+    const playerId = req.data.playerId;
+    const mes = req.data.logsDescription;
+    const message = { 
+        contents: {"en": mes},
+        include_player_ids: [playerId]
+        }
+        try {
+            const response = await client.createNotification(message);
+            
+        res.status(200).send({status:200});
+            console.log(response.body.id);
+        } catch (e) {
+            if (e instanceof OneSignal.HTTPError) {
+            // When status code of HTTP response is not 2xx, HTTPError is thrown.
+            console.log(e.statusCode);
+            console.log(e.body);
+            res.send({status:403});
+            }
+        }
+
 }
  exports.notifyDoctor  = async (req, res)=>{
     const _id = req.body.to;

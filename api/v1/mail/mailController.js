@@ -22,8 +22,11 @@ exports.mailArrayOfUsers = async (req,res)=>{
 			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${user.firstname+" "+user.lastname},</h1><p>On medikByte this week we will be talking about ${req.data.topic}</p> <div style="margin-bottom:50px">${req.data.article} </div> <p>To read more please click on this link </p> <a href=${url} style="background-color:green; border:0px; border-radius:10px; width:100%; padding:10px;  color:white;">Click Here</a></div>`
 			 };
 			 return client.sendMail(email, function(err, info){
-			
-				console.log('Message sent: ' + info.response);
+				if(err){
+					console.log(err);
+					return "Message sent";
+				}
+				console.log('Message sent: ' + info);
 				return "Message sent";
 			});
 	})
@@ -51,6 +54,57 @@ exports.mailArrayOfUsersMailler = async (req,res, next)=>{
 		
 		next();
 	}
+}
+
+exports.appointmentUsersMail = async (appointments)=>{
+	const mailler = await appointments.map(async(appointment)=>{
+		let link
+		if (appointment.session) {
+			 link = `<p style="margin-bottom:10px">Please click on this link to resume your session <a href="/chat/appointment/${appointment.appointment._id}/session/${appointment.appointment.sessionId}">Resume Session</a></p>`
+		}else{
+			 link = ""
+		}
+		let email = {
+			to: appointment.user.email,
+			from: `"Medikcare" support@medikcare.com`,
+			subject: "Medical Appointment Notification.",
+			text: '',
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${appointment.user.firstname+" "+appointment.user.lastname},</h1><div style="margin-bottom:50px">We will Like to remind you of your appointment with Dr ${appointment.doctor.firstname} which is on ${appointment.appointment.appointmentDate}. ${link} </div> <p style="margin-bottom:10px">Best Regards,<p><p>MedikCare Support.</p></div>`
+			 };
+			 console.log(email)
+			 return client.sendMail(email, function(err, info){
+				console.log('Message sent: ' + info.response);
+				return  "Message sent";
+			});
+	})
+	const mail = await Promise.all(mailler);
+	return mail;
+}
+
+
+exports.appointmentDoctorMail = async (appointments)=>{
+	const mailler = await appointments.map(async(appointment)=>{
+		let link	
+		if (appointment.session) {
+			 link = `<p style="margin-bottom:10px">Please click on this link to resume your session <a href="/chat/appointment/${appointment.appointment._id}/session/${appointment.appointment.sessionId}">Resume Session</a></p>`
+		}else{
+			 link = ""
+		}
+		let email = {
+			to: appointment.doctor.email,
+			from: `"Medikcare" support@medikcare.com`,
+			subject: "Medical Appointment Notification.",
+			text: '',
+			html: `<div style="border:2px solid rgba(0,0,0,.125); border-radius: 10px; padding:20px;"><img style="50%" src="https://www.medikcare.com/MedikImage/MED3.png" /> <h1>Hello ${appointment.user.firstname+" "+appointment.user.lastname},</h1><div style="margin-bottom:50px">We will Like to remind you of your medical appointment with  ${appointment.user.firstname} ${appointment.user.lastname} which is on ${appointment.appointment.appointmentDate}. ${link}</div> <p style="margin-bottom:10px">Best Regards,<p><p>MedikCare Support.</p></div>`
+			 };
+			 console.log(email)
+			 return client.sendMail(email, function(err, info){
+				console.log('Message sent: ' + info.response);
+				return  "Message sent";
+			});
+	})
+	const mail = await Promise.all(mailler);
+	return mail;
 }
 
 exports.mailExternalMailler = async (req,res, next)=>{
@@ -382,3 +436,4 @@ exports.sendPasswordMail = (req, res, next) =>{
 		next();
 	
   });*/	
+  

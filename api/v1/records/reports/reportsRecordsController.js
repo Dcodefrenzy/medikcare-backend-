@@ -204,15 +204,18 @@ exports.getUserReport = (req, res, next)=>{
 
 
 exports.updateReport = (req, res, next)=>{
+    console.log(req.body)
     const _sessionId = req.body._sessionId;
     const drugs = [{name:req.body.name, interval:req.body.interval, duration:req.body.duration}];
     ReportsRecords.findOne({_sessionId:_sessionId}).then((record)=>{
         if (record) {
+            console.log("old r")
             ReportsRecords.findOneAndUpdate({_sessionId:_sessionId}, {$set: {complains:req.body.complains, diagnoses:req.body.diagnoses, plan:req.body.plan, appointmentDate:req.body.appointmentDate, complete: true,}}, {new: true}).then((report)=>{  
             req.data = report;
             next();
             })
         }else{  
+            console.log("new r")
             ReportsRecord = new ReportsRecords({
                 complains:req.body.complains,
                 diagnoses:req.body.diagnoses,
@@ -221,7 +224,7 @@ exports.updateReport = (req, res, next)=>{
                 complete: true,
                 _doctorId: req.body._doctorId,
                 _userId: req.body._userId,
-                _sessionId:req.body.chatSessionId,
+                _sessionId:req.body._sessionId,
                 dateCreated:new Date(),
         });
 

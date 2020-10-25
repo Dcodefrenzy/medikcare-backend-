@@ -12,6 +12,7 @@ const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.Ones
 let imgPath;
 if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
+    imgPath2 = "/../../../../client/public/Images";
 }else{
 	imgPath = "/../../../../client/build/Images";
     imgPath2 = "/../../../../client/public/Images";
@@ -155,7 +156,27 @@ exports.getUserMailsAndPlayerIDs= async (req, res, next)=>{
 			next();
 		})
 }
-
+exports.notifyAppointment = async(req, res)=>{
+	const mes = req.data.logsDescription;
+	const playerId = req.data.playerId;
+	const message = { 
+		contents: {"en": mes},
+		include_player_ids: [playerId]
+	}
+	try {
+		const response = await client.createNotification(message);
+		
+		res.status(200).send({status:200});
+		console.log(response.body.id);
+	} catch (e) {
+		if (e instanceof OneSignal.HTTPError) {
+		// When status code of HTTP response is not 2xx, HTTPError is thrown.
+		console.log(e.statusCode);
+		console.log(e.body);
+		res.send({status:403});
+		}
+	}
+}
 exports.notifyUser = (req, res)=>{
    const _id = req.body.to;
    const mes = req.body.message;
@@ -472,7 +493,12 @@ exports.logout =(req, res, next)=>{
 	})
 }
 exports.findUserByID = (req, res, next) => {
-    const _id = req.body._userId;
+	let _id;
+	if (req.body) {
+		_id = req.body._userId;
+	}else if (req.data) {
+		_id = req.data.appointment.user;
+	}
  console.log({"uid":_id})
     users.findById(_id).then((user)=>{
 		console.log(user)
@@ -630,6 +656,21 @@ else{
 
 }
 
+
+exports.getUsersForAppointment = async(appointments)=>{
+	let newData;
+	 newData = await appointments.map(async(appointment, index)=>{
+		 
+		// console.log(appointment)
+	user = await  users.findById({_id:appointment.user});
+	return nData = {appointment:appointment, user:user};
+});
+
+const resp = await Promise.all(newData);
+return resp
+}
+
+
 exports.getUsersSessions = async(req, res,next)=>{
 	req.data= [];
 	let newData;
@@ -680,4 +721,31 @@ exports.userChatSession = (req, res, next)=>{
 	});
 }
 
+
+exports.notifyUserAppointment = async (appointments)=>{
+
+	const notify = await appointments.map(async(appointment)=>{
+		const message = { 
+			contents: {"en": `Hello ${appointment.user.firstname+" "+appointment.user.lastname}, We will Like to remind you of your appointment with Dr ${appointment.doctor.firstname} which is on ${appointment.appointment.appointmentDate}.`},
+			include_player_ids: [appointment.user.playerId]
+			}
+			try {
+				console.log("here")
+				return response = await client.createNotification(message);
+				
+			} catch (e) {
+				if (e instanceof OneSignal.HTTPError) {
+				// When status code of HTTP response is not 2xx, HTTPError is thrown.
+				console.log(e.statusCode);
+				console.log(e.body);
+				
+				console.log("err");
+				}
+			}
+	})
+	
+	const notification = await Promise.all(notify);
+	return notification;
+
+ }
 

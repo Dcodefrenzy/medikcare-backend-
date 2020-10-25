@@ -77,6 +77,7 @@ exports.getBlog = (req, res, next)=>{
             return res.status(403).send(error);
         }else {
             req.data = {status:200, message:blog};
+            
             next();
         }
     }).catch(e=>res.status(403).send({status:403, message:"Could not find blog"}));
@@ -84,14 +85,14 @@ exports.getBlog = (req, res, next)=>{
 
 exports.updateBlog=(req, res, next)=>{
     const _id = req.params.id
-    blogs.findByIdAndUpdate(_id, {$set: {topic:req.body.topic, article:req.body.article, category:req.body.category, dateUpdated:new Date(), _updatedBy:req.admin._id }}, {new: true})
+    blogs.findByIdAndUpdate(_id, {$set: {topic:req.body.topic, article:req.body.article,videoLink:req.body.videoLink, category:req.body.category, dateUpdated:new Date(), _updatedBy:req.admin._id }}, {new: true})
         .then((blog)=>{
             if (!blog) {
                 const error = {status:403, message:"Could not find blog"}
                 return res.status(403).send(error);
             }else {
                 
-        const blogItem = {status:201,topic:blog.topic, category:blog.category, article:blog.article, _id:req.admin._id, blogId:blog._id,}
+        const blogItem = {status:201,topic:blog.topic, category:blog.category,videoLink:blog.videoLink, article:blog.article, _id:req.admin._id, blogId:blog._id,}
         req.data = blogItem;
 		req.data.loggerUser = "Admin";
 		req.data.logsDescription = `Admin ${req.admin.firstname+" "+req.admin.lastname} updated article ${blog.topic}`;
@@ -171,7 +172,7 @@ exports.getBlogForUsers = (req, res, next)=>{
            return res.status(403).send(error);
        }else {
         const blogArticle = blog.article.slice(0, 500).replace(/<[^>]+>/g, '');
-        const blogItem = {status:201,topic:blog.topic, category:blog.category, article:blogArticle, _id:req.admin._id, blogId:blog._id,}
+        const blogItem = {status:201,topic:blog.topic, category:blog.category, videoLink:blog.videoLink, article:blogArticle, _id:req.admin._id, blogId:blog._id,}
         req.data = blogItem;
         next();
        }

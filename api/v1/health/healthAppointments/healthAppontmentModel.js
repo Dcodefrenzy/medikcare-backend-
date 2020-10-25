@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const AppointmentSchema = mongoose.Schema({
         appointmentDate:{
-            type:String,
+            type:Date,
             require:true,
         },
         start:{
@@ -23,8 +23,13 @@ const AppointmentSchema = mongoose.Schema({
             type:String,
             require:true,
         },
+        cancel:{
+            type:Boolean,
+            default:false,
+        },
         createdAt:{
-            type:String,
+            type:Date,
+            default:Date.now,
         },
 });
 
