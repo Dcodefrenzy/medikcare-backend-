@@ -8,11 +8,13 @@ require('dotenv').config()
 const OneSignal = require('onesignal-node');
 const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
 
-let imgPath;
+let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
-	imgPath = "/../../../../client/public/Images";
+	imgPath = "../../../../../../client/public/Images";
+	imgPath2 = "../../../../../../client/public/Images";
 }else{
-	imgPath = "/../../../../client/build/Images"
+	imgPath = "../../../../../../client/build/Images";
+	imgPath2 = "../../../../../../client/public/Images";
 }
 
 let storage = multer.diskStorage({

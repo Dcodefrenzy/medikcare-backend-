@@ -5,16 +5,19 @@ const path = require('path');
 
 require('dotenv').config()
 
-let imgPath;
+let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
-	imgPath = "/../../../../client/public/Images";
+	imgPath = "../../../../../../client/public/Files";
+	imgPath2 = "../../../../../../client/public/Files";
 }else{
-	imgPath = "/../../../../client/build/Images"
+	imgPath = "../../../../../../client/build/Files";
+	imgPath2 = "../../../../../../client/public/Files";
 }
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 	  cb(null, path.join(__dirname, imgPath))
+	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
         const name = file.originalname.replace(/\s/g, '');

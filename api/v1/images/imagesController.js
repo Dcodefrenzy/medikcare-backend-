@@ -7,23 +7,26 @@ const path = require('path');
 
 require('dotenv').config()
 
-let imgPath;
+let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
-	imgPath = "/../../../../client/public/Images";
+  imgPath = "/../../../../client/public/Images";
+	imgPath2 = "/../../../../client/public/Images";
 }else{
-	imgPath = "/../../../../client/build/Images"
+	imgPath = "/../../../../client/build/Images";
+	imgPath2 = "/../../../../client/public/Images";
 }
 
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 	  cb(null, path.join(__dirname, imgPath))
+	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
 		cb(null, Date.now() + '-' +file.originalname )
 	  }
   })
-  const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');
+  const upload = multer({ storage: storage }, {limits: { fileSize: 4}}).single('image');
 
    exports.updateImage =  (req, res, next) => {
 		upload(req, res, function (err) {
@@ -65,4 +68,19 @@ let storage = multer.diskStorage({
   exports.fetchAllImages = (req, res)=>{
         blogImages.find().then(images=>res.status(200).send({"status":200,message:images}))
         .catch(e=>res.status(403).send({"status":403,message:e}))
+  }
+
+  
+  exports.updateChatImage =  (req, res, next) => {
+      upload(req, res, function (err) {
+        
+        if (err instanceof multer.MulterError) {
+          return res.status(500).json(err)
+        } else if (err) {
+          return res.status(500).json(err)
+        }
+       
+          res.status(201).send({status:201,filename:req.file.filename})
+
+    })
   }
