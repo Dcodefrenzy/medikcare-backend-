@@ -10,8 +10,8 @@ let imgPath;
 if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
 }else{    
-	imgPath = "/../../../../client/build/Images";
-	imgPath2 = "/../../../../client/public/Images";
+	imgPath = "/../../../../user/build/Images";
+	imgPath2 = "/../../../../user/public/Images";
 }
 
 let storage = multer.diskStorage({
