@@ -5,6 +5,7 @@ const path = require('path');
 
 require('dotenv').config()
 
+const newDate = new Date();
 let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
 	imgPath = "../../../../../../client/public/Files";
@@ -21,7 +22,7 @@ let storage = multer.diskStorage({
 	},
 	filename: function (req, file, cb) {
         const name = file.originalname.replace(/\s/g, '');
-		cb(null, Date.now() + '-' +name)
+		cb(null, newDate + '-' +name)
 	  }
   })
   

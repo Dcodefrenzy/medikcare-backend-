@@ -8,6 +8,7 @@ require('dotenv').config()
 const OneSignal = require('onesignal-node');
 const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
 
+const newDate = new Date();
 let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
 	imgPath = "../../../../../../client/public/Images";
@@ -22,7 +23,7 @@ let storage = multer.diskStorage({
 	  cb(null, path.join(__dirname, imgPath))
 	},
 	filename: function (req, file, cb) {
-		cb(null, Date.now() + '-' +file.originalname )
+		cb(null, newDate + '-' +file.originalname )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');

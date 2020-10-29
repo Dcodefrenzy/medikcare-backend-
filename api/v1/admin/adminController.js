@@ -6,9 +6,11 @@ const multer = require('multer');
 const path = require('path');
 require('dotenv').config()
 
-let imgPath;
+const newDate = new Date();
+let imgPath, imgPath2;
 if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
+	imgPath2 = "/../../../../client/public/Images";
 }else{    
 	imgPath = "/../../../../user/build/Images";
 	imgPath2 = "/../../../../user/public/Images";
@@ -20,7 +22,7 @@ let storage = multer.diskStorage({
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null, Date.now() + '-' +file.originalname )
+		cb(null, newDate + '-' +file.originalname )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');

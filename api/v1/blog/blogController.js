@@ -14,14 +14,14 @@ if ( process.env.DEV_ENV) {
     imgPath2 = "/../../../../user/public/Images";
 }
 
-
+const newDate = new Date();
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 	  cb(null, path.join(__dirname, imgPath))
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null, Date.now() + '-' +file.originalname )
+		cb(null, newDate + '-' +file.originalname )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');
