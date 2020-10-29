@@ -21,7 +21,7 @@ if ( process.env.DEV_ENV) {
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-	  cb(null, path.join(__dirname, imgPath, imgPath2))
+	  cb(null, path.join(__dirname, imgPath))
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
