@@ -10,6 +10,7 @@ const OneSignal = require('onesignal-node');
 const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
 
 let imgPath;
+const newDate = new Date();
 if ( process.env.DEV_ENV) {
 	imgPath = "/../../../../client/public/Images";
     imgPath2 = "/../../../../client/public/Images";
@@ -21,10 +22,10 @@ if ( process.env.DEV_ENV) {
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 	  cb(null, path.join(__dirname, imgPath, imgPath2))
-
+	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null, Date.now() + '-' +file.originalname )
+		cb(null,  newDate+ '-' +file.originalname )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');
