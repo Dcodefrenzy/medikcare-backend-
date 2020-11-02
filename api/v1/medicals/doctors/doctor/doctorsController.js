@@ -483,14 +483,15 @@ exports.newPasswordChange =(req, res, next) =>{
 }
 
 exports.getDoctorsSession=async(req, res,next)=>{
-    
 	let newData;
     
-     newData = await req.data.map(async(data, index)=>{
-            const sessions = JSON.parse(data.sessions);
-            const users = JSON.parse(data.users);
+     newData = await req.newData.map(async(data, index)=>{
+       
+            const sessions = data.sessions;
+            const users =data.users;
+            const chatSessions = JSON.parse(data.chatSessions);
             const doctor = await doctors.findOne({$or: [ {_id:sessions.from}, {_id:sessions.to}]});
-            return ndata = {sessions:sessions, users:users, doctors:doctor};
+            return ndata = {sessions:sessions, users:users, chatSessions:chatSessions, doctors:doctor};
 	});
 	const resp = await Promise.all(newData);
 	if(resp){

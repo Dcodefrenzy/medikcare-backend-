@@ -6,6 +6,7 @@ const userController = require("../../../users/usersController");
 const logsController = require("../../../logs/logsController");
 const metricsController = require("../../../metrics/ads/adsMetricsController");
 const adminAuth = require("../../../admin/adminController");
+const sessionController = require("../../../health/healthConsultations/chat/chatController");
 
 
 
@@ -22,7 +23,7 @@ router.route("/file/update")
     .post(doctorsController.doctorAuthenticate, doctorsRecordsController.updateAnnualPracticingLicence)
     
 router.route("/user/doctor/:id")
-    .get(userController.userAuthenticate, doctorsRecordsController.doctorUserRecord)
+    .get(userController.userAuthenticate, sessionController.fetchUserSession, doctorsRecordsController.doctorUserRecord)
 
 
 

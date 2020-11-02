@@ -11,9 +11,10 @@ exports.createSession = (req, res, next)=>{
         complain:req.body.complain,
         emergencyLevel:req.body.emergencyLevel,
         userId:req.user._id,
+        means:req.body.means,
     });
     chat.save().then((chat)=>{
-            const chatSession = {status:201,complain:chat.complain, _id:chat._id}
+            const chatSession = {status:201,complain:chat.complain, _id:chat._id,means:chat.means}
         req.data = chatSession;
 		req.data.loggerUser = "User";
 		req.data.logsDescription = `You started a session`;
@@ -47,8 +48,9 @@ exports.createSession = (req, res, next)=>{
 }
 
 exports.updateStartSession =(req, res,next)=>{
-    const _id = req.params.id;
-    chats.findOneAndUpdate({userId:_id, sessionStart:false}, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
+    const userId = req.params.id;
+    const _id = req.params.sessionId;
+    chats.findOneAndUpdate({_id:_id, userId:userId, sessionStart:false}, {$set: {sessionStart:true, sessionEnd:false}}, {new: true}).then((chat)=>{
         req.data.status = 201;
         req.data._id = _id;
         req.data.loggerUser = "User";
@@ -171,6 +173,17 @@ exports.getUserSession = (req, res, next) =>{
 	});
 }
 
+exports.fetchUserSession = (req, res, next) =>{
+    const userId = req.user._id;
+    chats.find({userId:userId, sessionStart:true, sessionEnd:false}).sort({_id:-1}).limit(1).then((chat)=>{
+        req.session  = chat[0];
+        next(); 
+    }).catch((e)=>{
+        console.log(e)
+		res.status(403).send("No chats found");
+	});
+}
+
 exports.getUserSessionForUpdate = (req, res, next)=>{
     const userId = req.params.id;
     chats.findOne({userId:userId, sessionEnd:false}).then((chat)=>{
@@ -189,7 +202,9 @@ exports.getUserSessionForUpdate = (req, res, next)=>{
 
 exports.getUserSessionForDoctors = (req, res, next) =>{
     const userId = req.params.id;
-    chats.findOne({userId:userId, sessionEnd:false}).then((chat)=>{
+    const _id = req.params.sessionId;
+    console.log(_id)
+    chats.findOne({_id:_id, userId:userId, sessionEnd:false}).then((chat)=>{
             if (chat) {
                 req.data.message = chat
                 res.status(200).send(req.data);
@@ -248,4 +263,20 @@ exports.updateAppointmentSession =(req, res,next)=>{
 		res.status(403).send(err);
 	});
  
+}
+
+
+exports.getAllDoctorsSessions = async(req, res,next)=>{
+req.newData = [];
+	let newData;
+	newData = await req.data.map(async(data, index)=>{
+        const users = JSON.parse(data.users);
+   chatSessions = await  chats.find({userId:users._id}).sort({_id:-1}).limit(1);
+        
+    req.newData.push({ sessions: JSON.parse(data.sessions), users:JSON.parse(data.users), chatSessions: JSON.stringify(chatSessions[0]) });
+});
+    const resp = await Promise.all(newData);
+    if (resp) {
+        next();
+    }
 }

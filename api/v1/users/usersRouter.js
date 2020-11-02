@@ -78,7 +78,7 @@ router.route("/chatMetric/add")
 router.route("/find-doctor/:id")
 	.get(controller.userAuthenticate, doctorController.findUserDoctorByID)		
 	
-router.route("/doctor/:id")
+router.route("/doctor/:id/:sessionId")
 		.get(doctorController.doctorAuthenticate, controller.viewUserNameById, reportController.getUserReportsForDoctors, chatController.getUserSessionForDoctors)
 
 		

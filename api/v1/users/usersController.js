@@ -679,10 +679,10 @@ exports.getUsersSessions = async(req, res,next)=>{
    user = await  users.findOne({$or: [ {_id:data.from}, {_id:data.to}]});
     req.data.push({ sessions: JSON.stringify(data), users: JSON.stringify(user) });
 });
-const resp = await Promise.all(newData);
-if (resp) {
-	next();
-}
+	const resp = await Promise.all(newData);
+	if (resp) {
+		next();
+	}
 }
 
 

@@ -14,6 +14,11 @@ const chatSchema = mongoose.Schema({
             type:String,
             require:true,
         },
+        means: {
+            type:String,
+            require:true,
+            default:"chat"
+        },
         emergencyLevel:{
             type:Number,
             require:true,

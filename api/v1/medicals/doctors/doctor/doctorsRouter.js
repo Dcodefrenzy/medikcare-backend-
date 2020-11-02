@@ -43,7 +43,7 @@ router.route("/image/update")
 router.route("/profile/update")
 	.patch(doctorsController.doctorAuthenticate, doctorsController.updateDoctor, logsController.addLogs)
    
-router.route("/chat/session/:id")
+router.route("/chat/session/:id/:sessionId")
         .patch(doctorsController.doctorAuthenticate, userController.fetchUserById, chatSessionController.updateStartSession, mailerController.sendChatMail, logsController.addLogNext, userController.sendChatNotification, logsController.addLogs)
 
 router.route("/password/change")
@@ -74,7 +74,7 @@ router.route("/admin/delete/:id")
     .patch(adminAuth.adminAuthenticate, doctorsController.deleteDoctor, logsController.addLogs)
 
 router.route("/users-session")
-    .post(doctorsController.doctorAuthenticate, userController.getUsersSessions, doctorsController.getDoctorsSession)
+    .post(doctorsController.doctorAuthenticate, userController.getUsersSessions, chatSessionController.getAllDoctorsSessions,   doctorsController.getDoctorsSession)
 
 
 
