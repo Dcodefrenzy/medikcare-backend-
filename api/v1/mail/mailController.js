@@ -202,6 +202,8 @@ exports.mailUsers = (req, res)=>{
 	  });	
 }
 exports.sendRegistrationMail = (req, res, next) =>{
+	console.log(process.env.Email)
+	console.log(process.env.Pass)
 	const usersName = req.data.name;
 	const usermail = req.data.email;
 	const token = req.data.token;
