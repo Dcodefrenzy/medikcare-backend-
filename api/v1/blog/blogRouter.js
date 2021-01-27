@@ -17,6 +17,10 @@ router.route("/")
 
 router.route("/users")
     .post(controller.getAllBlogs, adminController.viewAdminsByIds)
+
+    
+router.route("/users/category/:id")
+    .post(controller.getAllBlogsUsingCategories, adminController.viewAdminsByIds)
     
 router.route("/users/:id")
         .post(controller.getBlog, adminController.viewAdminNameById)

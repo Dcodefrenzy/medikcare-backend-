@@ -8,12 +8,14 @@ const path = require('path');
 require('dotenv').config();
 const OneSignal = require('onesignal-node');
 const client = new OneSignal.Client(process.env.OnesignalAppId, process.env.OnesignalApi);
+//const ddj  = require("../../../../client/public/Dummy")
 
 let imgPath;
 const newDate = new Date();
 if ( process.env.DEV_ENV) {
+	console.log(newDate)
 	imgPath = "/../../../../client/public/Images";
-    imgPath2 = "/../../../../client/public/Images";
+    imgPath2 = "/../../../../client/public/Dummy";
 }else{
 	imgPath = "/../../../../user/build/Images";
     imgPath2 = "/../../../../user/public/Images";
@@ -25,7 +27,7 @@ let storage = multer.diskStorage({
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null,  newDate+ '-' +file.originalname )
+		cb(null,  Date.now()+file.originalname.replace(/\s/g, '-') )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');
@@ -34,7 +36,9 @@ let storage = multer.diskStorage({
 
 		upload(req, res, function (err) {
 			const id = req.user._id;
+			console.log(req.file.filename)
 			if (err instanceof multer.MulterError) {
+				
 				return res.status(500).json(err)
 			} else if (err) {
 				return res.status(500).json(err)

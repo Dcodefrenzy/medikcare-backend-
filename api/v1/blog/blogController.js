@@ -21,7 +21,7 @@ let storage = multer.diskStorage({
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null, newDate + '-' +file.originalname )
+		cb(null, Date.now()+file.originalname.replace(/\s/g, '-'))
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 2 }}).single('image');
@@ -55,6 +55,14 @@ exports.saveBlog = (req, res, next)=>{
 
 exports.getAllBlogs = (req, res,next)=>{
     blogs.find({deleteArticle:false}, null, {sort: {_id: -1}}).then((blog)=>{
+        req.data = {status:200, message:blog};
+        next();
+    })
+}
+
+exports.getAllBlogsUsingCategories = (req, res, next)=>{
+    const _category = req.params.id;
+    blogs.find({deleteArticle:false, category:_category,}, null, {sort: {_id: -1}}).then((blog)=>{
         req.data = {status:200, message:blog};
         next();
     })

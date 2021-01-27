@@ -25,7 +25,7 @@ let storage = multer.diskStorage({
 	  cb(null, path.join(__dirname, imgPath2))
 	},
 	filename: function (req, file, cb) {
-		cb(null, newDate + '-' +file.originalname )
+		cb(null, Date.now()+file.originalname.replace(/\s/g, '-') )
 	  }
   })
   const upload = multer({ storage: storage }, {limits: { fileSize: 4}}).single('image');
